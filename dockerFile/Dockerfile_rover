@@ -30,8 +30,8 @@ RUN apt update 1>/dev/null	&& apt upgrade -y 1>/dev/null && \
 ### Set User	
 RUN groupadd ${USER_NAME} --gid ${USER_GID} && \
     useradd -l -m ${USER_NAME} -u ${USER_UID} -g ${USER_GID} -s /bin/bash && \
-	echo "px4 ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/${USER_NAME} && \
-	mkdir -p /px4 && \
+	echo "${USER_NAME} ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/${USER_NAME} && \
+	mkdir -p /${USER_NAME} && \
 	chmod 0440 /etc/sudoers.d/${USER_NAME} && chown -R ${USER_NAME}:${USER_NAME} /${USER_NAME} 
 
 ### Change user
@@ -63,5 +63,5 @@ RUN echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> ~/.bashrc && \
 	# export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp # For using cyclonedds
 
 ### Finilize
-RUN rm -rf /var/lib/apt/lists/* &&\
-	autoremove -y && rm -rf /var/lib/apt/lists/* 
+RUN sudo rm -rf /var/lib/apt/lists/* &&\
+	sudo autoremove -y 
