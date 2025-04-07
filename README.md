@@ -11,9 +11,7 @@ source /opt/ros/$ROS_DISTRO/setup.bash && colcon buld --symlink-install
 source ./install/setup.bash
 ros2 launch sllidar_ros2 view_sllidar_c1_launch.py
 ros2 run tf2_ros static_transform_publisher 0 0 0 0 0 0 base_link laser
-
 ```
-Then 
 ## using Rtabmap for odometry with just lidar
 use fallowing commands for now:
 ```
