@@ -1,0 +1,158 @@
+services:
+  Lidar:
+    image: "docker.io/alienkh/ros2_rover:${ros2_rover_tag:?error}"
+    container_name: lidar
+    hostname: lidar
+    tty: true
+    privileged: true
+    restart: unless-stopped
+    network_mode: "host"
+    # networks:
+    #   rover:
+    #     ipv4_address: "10.20.10.2"
+
+    environment:
+      DISPLAY: ${DISPLAY}
+      XAUTHORITY: ${XAUTH}
+        
+    volumes:
+      - /tmp/.X11-unix/:/tmp/.X11-unix/
+      - /dev:/dev/
+      - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
+
+    # command: /bin/bash -c "sleep inf"
+    # entrypoint: ["/bin/sh", "-c"]
+      # With RVIZ
+    command: /bin/bash -c "
+      ros2 launch sllidar_ros2 view_sllidar_c1_launch.py "
+      # No Rviz
+    # command: /bin/bash -c "
+    #   ros2 launch sllidar_ros2 sllidar_c1_launch.py "
+
+  StaticTransform:
+    image: "docker.io/alienkh/ros2_rover:${ros2_rover_tag:?error}"
+    container_name: st
+    hostname: st
+    tty: true
+    privileged: true
+    restart: unless-stopped
+    network_mode: "host"
+    # networks:
+    #   rover:
+    #     ipv4_address: "10.20.10.2"
+
+    # environment:
+    #   DISPLAY: ${DISPLAY}
+    #   XAUTHORITY: ${XAUTH}
+        
+    volumes:
+      - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
+
+    # command: /bin/bash -c "sleep inf"
+    # entrypoint: ["/bin/sh", "-c"]
+
+    command: /bin/bash -c "
+      ros2 run tf2_ros static_transform_publisher 0 0 0 0 0 0 base_link laser "
+
+  Rtabmap:
+    image: "docker.io/alienkh/ros2_rover:${ros2_rover_tag:?error}"
+    container_name: rtabmap
+    hostname: rtabmap
+    tty: true
+    privileged: true
+    restart: unless-stopped
+    network_mode: "host"
+    # networks:
+    #   rover:
+    #     ipv4_address: "10.20.10.3"
+
+    environment:
+      DISPLAY: ${DISPLAY}
+      XAUTHORITY: ${XAUTH}
+        
+    volumes:
+      - /tmp/.X11-unix/:/tmp/.X11-unix/
+      - /dev:/dev/
+      - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
+
+    # command: /bin/bash -c "sleep inf"
+    # entrypoint: ["/bin/sh", "-c"]
+
+    command: /bin/bash -c "
+      sleep inf "
+
+
+  # imu_filter:
+  #   image: "docker.io/alienkh/ros2_rover:${ros2_rover_tag:?error}"
+  #   privileged: true
+  #   # restart: unless-stopped
+  #   network_mode: "host"
+  #   # networks:
+  #   #   mins:
+  #   #     ipv4_address: "10.20.10.4"
+  #   depends_on:
+  #     # - roscore
+  #     - oak
+  #   # environment:
+  #   #   DISPLAY: ${DISPLAY}
+  #   #   "XAUTHORITY": ${XAUTH}
+  #   volumes:
+  #     # - /tmp/.X11-unix/:/tmp/.X11-unix/
+  #     # - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
+  #     - /dev/:/dev/
+  #   command: /bin/bash -c "
+  #     rosrun imu_filter_madgwick imu_filter_node \
+  #     _use_mag:=false _use_magnetic_field_msg:=false _publish_tf:=false _world_frame:='enu' 
+  #      /imu/data_raw:=/stereo_inertial_publisher/imu \
+  #      /imu/data:=/imu/data "
+
+  rqt:
+    image: "docker.io/alienkh/ros2_rover:${ros2_rover_tag:?error}"
+    container_name: rqt_rover
+    hostname: rqt
+    tty: true
+    network_mode: "host"
+    # networks:
+    #   rover:
+    #     ipv4_address: "10.20.10.5"
+    # restart: unless-stopped
+    depends_on:
+      - Lidar
+    environment:
+      DISPLAY: ${DISPLAY}
+      "XAUTHORITY": ${XAUTH}
+    volumes:
+      - /tmp/.X11-unix/:/tmp/.X11-unix/
+    command: /bin/bash -c "
+      source /px4/ws_rover/install/setup.bash && rqt"
+
+  # uxrcedds:
+  #   image: "docker.io/alienkh/ros2_rover:${ros2_rover_tag:?error}"
+  #   container_name: uxrcedds
+  #   hostname: uxrcedds
+  #   # depends_on:
+  #   #   - px4
+  #   tty: true
+  #   network_mode: "host"
+  #   # networks:
+  #     # rover:
+  #     #   ipv4_address: "10.20.10.6"
+  #   # restart: unless-stopped
+  #   environment:
+  #     DISPLAY: ${DISPLAY}
+  #     "XAUTHORITY": ${XAUTH}
+  #   volumes:
+  #     - /tmp/.X11-unix/:/tmp/.X11-unix/
+
+  #   command: /bin/bash -c "
+  #     source /px4/ws_px4/install/setup.bash && MicroXRCEAgent udp4 -p 8888"
+
+
+
+
+networks:
+  rover:
+    ipam:
+      driver: default
+      config:
+        - subnet: "10.20.10.0/24"
