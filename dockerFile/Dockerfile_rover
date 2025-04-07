@@ -64,4 +64,4 @@ RUN echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> ~/.bashrc && \
 
 ### Finilize
 RUN sudo rm -rf /var/lib/apt/lists/* &&\
-	sudo autoremove -y 
+	sudo apt autoremove -y 
