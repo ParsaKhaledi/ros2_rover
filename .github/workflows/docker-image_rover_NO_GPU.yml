@@ -3,7 +3,7 @@ name: Docker Image No GPU CI
 on:
   push:
     paths:
-      - 'dockerFile/Dockerfile_Rover'
+      - 'dockerFile/Dockerfile_rover'
     # branches: [ "docker" ]
   # pull_request:
   #   branches: [ "main" ]
