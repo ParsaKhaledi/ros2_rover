@@ -7,9 +7,9 @@ services:
     privileged: true
     restart: unless-stopped
     # network_mode: "host"
-    # networks:
-    #   rover:
-    #     ipv4_address: "10.20.10.2"
+    networks:
+      rover:
+        ipv4_address: "10.20.10.2"
 
     environment:
       DISPLAY: ${DISPLAY}
@@ -23,12 +23,12 @@ services:
     # command: /bin/bash -c "sleep inf"
     # entrypoint: ["/bin/sh", "-c"]
       # With RVIZ
-    command: /bin/bash -c "
-      source /home/rover/ws_rover/install/setup.bash && ros2 launch sllidar_ros2 view_sllidar_c1_launch.py "
+    # command: /bin/bash -c "
+    #   source /home/rover/ws_rover/install/setup.bash && ros2 launch sllidar_ros2 view_sllidar_c1_launch.py "
     #  ros2 run tf2_ros static_transform_publisher 0 0 0 0 0 0 base_link laser"
       # No Rviz
-    # command: /bin/bash -c "
-    #    source /home/rover/ws_rover/install/setup.bash && ros2 launch sllidar_ros2 sllidar_c1_launch.py "
+    command: /bin/bash -c "
+       source /home/rover/ws_rover/install/setup.bash && ros2 launch sllidar_ros2 sllidar_c1_launch.py "
       # ros2 run tf2_ros static_transform_publisher 0 0 0 0 0 0 base_link laser &\
       # ros2 run rtabmap_odom icp_odometry  "
 
@@ -38,11 +38,13 @@ services:
     hostname: st
     tty: true
     privileged: true
+    depends_on:
+      - Lidar
     restart: unless-stopped
     # network_mode: "host"
-    # networks:
-    #   rover:
-    #     ipv4_address: "10.20.10.2"
+    networks:
+      rover:
+        ipv4_address: "10.20.10.3"
 
     # environment:
     #   DISPLAY: ${DISPLAY}
@@ -57,17 +59,19 @@ services:
     command: /bin/bash -c "
       ros2 run tf2_ros static_transform_publisher 0 0 0 0 0 0 base_link laser "
 
-  Rtabmap_odom:
+  Rtabmap:
     image: "docker.io/alienkh/ros2_rover:${ros2_rover_tag:?error}"
     container_name: rtabmap
     hostname: rtabmap
     tty: true
     privileged: true
     restart: unless-stopped
+    depends_on:
+      - StaticTransform
     # network_mode: "host"
-    # networks:
-    #   rover:
-    #     ipv4_address: "10.20.10.3"
+    networks:
+      rover:
+        ipv4_address: "10.20.10.4"
 
     environment:
       DISPLAY: ${DISPLAY}
@@ -75,7 +79,7 @@ services:
         
     volumes:
       - /tmp/.X11-unix/:/tmp/.X11-unix/
-      - /dev:/dev/
+      # - /dev:/dev/
       - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
       - ./:/home/rover/ws_rover/volume/
 
@@ -83,7 +87,65 @@ services:
     # entrypoint: ["/bin/sh", "-c"]
 
     command: /bin/bash -c "
-      sleep inf "
+      ros2 launch /home/rover/ws_rover/volume/rtabmap_rover.launch.py "
+
+  Nav2:
+    image: "docker.io/alienkh/ros2_rover:${ros2_rover_tag:?error}"
+    container_name: nav2
+    hostname: nav2
+    tty: true
+    privileged: true
+    restart: unless-stopped
+    depends_on:
+      - Rtabmap
+    # network_mode: "host"
+    networks:
+      rover:
+        ipv4_address: "10.20.10.5"
+
+    environment:
+      DISPLAY: ${DISPLAY}
+      XAUTHORITY: ${XAUTH}
+        
+    volumes:
+      - /tmp/.X11-unix/:/tmp/.X11-unix/
+      - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
+      - ./:/home/rover/ws_rover/volume/
+
+    # command: /bin/bash -c "sleep inf"
+    # entrypoint: ["/bin/sh", "-c"]
+
+    command: /bin/bash -c "
+      ros2 launch nav2_bringup navigation_launch.py params_file:=/home/rover/ws_rover/volume/nav2.yaml  "
+
+  Nav2_rviz:
+    image: "docker.io/alienkh/ros2_rover:${ros2_rover_tag:?error}"
+    container_name: nav2_rviz
+    hostname: nav2_rivz
+    tty: true
+    privileged: true
+    restart: unless-stopped
+    depends_on:
+      - Nav2
+    # network_mode: "host"
+    networks:
+      rover:
+        ipv4_address: "10.20.10.6"
+
+    environment:
+      DISPLAY: ${DISPLAY}
+      XAUTHORITY: ${XAUTH}
+        
+    volumes:
+      - /tmp/.X11-unix/:/tmp/.X11-unix/
+      - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
+      - ./:/home/rover/ws_rover/volume/
+
+    # command: /bin/bash -c "sleep inf"
+    # entrypoint: ["/bin/sh", "-c"]
+
+    command: /bin/bash -c "
+      ros2 launch nav2_bringup rviz_launch.py "
     
   
   # Rtabmap_backend:
@@ -139,47 +201,25 @@ services:
   #      /imu/data_raw:=/stereo_inertial_publisher/imu \
   #      /imu/data:=/imu/data "
 
-  rqt:
-    image: "docker.io/alienkh/ros2_rover:${ros2_rover_tag:?error}"
-    container_name: rqt_rover
-    hostname: rqt
-    tty: true
-    # network_mode: "host"
-    # networks:
-    #   rover:
-    #     ipv4_address: "10.20.10.5"
-    # restart: unless-stopped
-    depends_on:
-      - Lidar
-    environment:
-      DISPLAY: ${DISPLAY}
-      "XAUTHORITY": ${XAUTH}
-    volumes:
-      - /tmp/.X11-unix/:/tmp/.X11-unix/
-    command: /bin/bash -c "
-      source /px4/ws_rover/install/setup.bash && rqt"
-
-  # uxrcedds:
+  # rviz2:
   #   image: "docker.io/alienkh/ros2_rover:${ros2_rover_tag:?error}"
-  #   container_name: uxrcedds
-  #   hostname: uxrcedds
-  #   # depends_on:
-  #   #   - px4
+  #   container_name: rviz2
+  #   hostname: rviz2
   #   tty: true
-  #   network_mode: "host"
-  #   # networks:
-  #     # rover:
-  #     #   ipv4_address: "10.20.10.6"
+  #   # network_mode: "host"
+  #   networks:
+  #     rover:
+  #       ipv4_address: "10.20.10.6"
   #   # restart: unless-stopped
+  #   depends_on:
+  #     - Lidar
   #   environment:
   #     DISPLAY: ${DISPLAY}
   #     "XAUTHORITY": ${XAUTH}
   #   volumes:
   #     - /tmp/.X11-unix/:/tmp/.X11-unix/
-
   #   command: /bin/bash -c "
-  #     source /px4/ws_px4/install/setup.bash && MicroXRCEAgent udp4 -p 8888"
-
+  #     source /home/rover/ws_rover/install/setup.bash && rviz2 -d "
 
 
 
