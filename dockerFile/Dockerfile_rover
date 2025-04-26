@@ -66,5 +66,7 @@ RUN echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> ~/.bashrc && \
 	# export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp # For using cyclonedds
 
 ### Finilize
-RUN sudo rm -rf /var/lib/apt/lists/* &&\
-	sudo apt autoremove -y 
+USER root
+RUN rm -rf /var/lib/apt/lists/* &&\
+	apt autoremove -y 
+USER ${USER_NAME}
