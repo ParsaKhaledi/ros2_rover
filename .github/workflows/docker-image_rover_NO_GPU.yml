@@ -48,9 +48,8 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          flavor: latest
           images: ${{ env.Registery }}/${{ env.ImageName }}
-          tags: ${{ env.ImageTag }},{{default $.Repo }}
+          tags: ${{ env.ImageTag }}
       
       - name: Build and Push docker image for not using GPU
         id: build-and-push-rover
