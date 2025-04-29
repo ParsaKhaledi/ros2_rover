@@ -23,6 +23,7 @@ RUN apt update 1>/dev/null	&& apt upgrade -y 1>/dev/null && \
 	vim udev git sudo unzip curl cmake wget tmux\
 	ros-dev-tools \
 	xauth xorg openbox python3-argcomplete python3 python3-pip \
+	ros-$ROS_1DISTRO-rclcpp \
 	ros-$ROS_DISTRO-rmw-cyclonedds-cpp \
 	ros-$ROS_DISTRO-rviz2* \
 	ros-$ROS_DISTRO-rqt ros-$ROS_DISTRO-rqt-image-view \
