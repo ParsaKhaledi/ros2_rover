@@ -28,6 +28,7 @@ RUN apt update 1>/dev/null	&& apt upgrade -y 1>/dev/null && \
 	ros-$ROS_DISTRO-rqt ros-$ROS_DISTRO-rqt-image-view \
 	ros-$ROS_DISTRO-rqt-graph ros-$ROS_DISTRO-rqt-topic \
 	ros-$ROS_DISTRO-rqt-tf-tree \
+	ros-$ROS_DISTRO-depthai-ros \
 	ros-$ROS_DISTRO-navigation2 ros-$ROS_DISTRO-nav2-bringup \
 	ros-$ROS_DISTRO-rtabmap-ros 1>/dev/null
 
