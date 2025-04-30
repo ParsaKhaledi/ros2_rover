@@ -22,6 +22,7 @@ services:
 
     # command: /bin/bash -c "sleep inf"
     # entrypoint: ["/bin/sh", "-c"]
+    
       # With RVIZ
     # command: /bin/bash -c "
     #   source /home/rover/ws_rover/install/setup.bash && ros2 launch sllidar_ros2 view_sllidar_c1_launch.py "
@@ -32,28 +33,37 @@ services:
       # ros2 run tf2_ros static_transform_publisher 0 0 0 0 0 0 base_link laser &\
       # ros2 run rtabmap_odom icp_odometry  "
 
-  oak:
-    image: "docker.io/alienkh/ros2_rover:${ros2_rover_tag:?error}"
-    container_name: oak
-    hostname: oak
-    tty: true
-    privileged: true
-    restart: unless-stopped
-    # network_mode: "host"
-    networks:
-      rover:
-        ipv4_address: "10.20.10.3"
+  # oak:
+    # image: "docker.io/alienkh/ros2_rover:${ros2_rover_tag:?error}"
+    # container_name: oak
+    # hostname: oak
+    # tty: true
+    # privileged: true
+    # restart: unless-stopped
+    # # network_mode: "host"
+    # networks:
+    #   rover:
+    #     ipv4_address: "10.20.10.3"
 
-    environment:
-      DISPLAY: ${DISPLAY}
-      XAUTHORITY: ${XAUTH}
+    # environment:
+    #   DISPLAY: ${DISPLAY}
+    #   XAUTHORITY: ${XAUTH}
         
-    volumes:
-      - /tmp/.X11-unix/:/tmp/.X11-unix/
-      - /dev:/dev/
-      - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
+    # volumes:
+    #   - /tmp/.X11-unix/:/tmp/.X11-unix/
+    #   - /dev:/dev/
+    #   - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
 
-    command: /bin/bash -c "sleep inf"
+    # # command: /bin/bash -c "sleep inf"
+    # command: /bin/bash -c "
+    #   ros2 launch depthai_examples stereo_inertial_node.launch.py \
+    #   depth_aligned:=False \
+    #   monoResolution:=400p \
+    #   enableSpatialDetection:=False \
+    #   enableRviz:=True \
+    #   syncNN:=False \
+    #   mode:=rectified \
+    #   enable_imu:=true"
 
   StaticTransform:
     image: "docker.io/alienkh/ros2_rover:${ros2_rover_tag:?error}"
@@ -81,6 +91,7 @@ services:
 
     command: /bin/bash -c "
       ros2 run tf2_ros static_transform_publisher 0 0 0 0 0 0 base_link laser "
+      # & ros2 run tf2_ros static_transform_publisher 0 0 0 0 0 0 base_link oak-d-base-frame "
 
   Rtabmap:
     image: "docker.io/alienkh/ros2_rover:${ros2_rover_tag:?error}"
@@ -110,7 +121,7 @@ services:
     # entrypoint: ["/bin/sh", "-c"]
 
     command: /bin/bash -c "
-      ros2 launch /home/rover/ws_rover/volume/rtabmap_rover.launch.py "
+      ros2 launch /home/rover/ws_rover/volume/rtabmap_icp_lidar.launch.py "
 
   Nav2:
     image: "docker.io/alienkh/ros2_rover:${ros2_rover_tag:?error}"
