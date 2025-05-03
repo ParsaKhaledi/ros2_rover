@@ -39,10 +39,10 @@ services:
     tty: true
     privileged: true
     restart: unless-stopped
-    # network_mode: "host"
-    networks:
-      rover:
-        ipv4_address: "10.20.10.3"
+    network_mode: "host"
+    # networks:
+    #   rover:
+    #     ipv4_address: "10.20.10.3"
 
     environment:
       DISPLAY: ${DISPLAY}
@@ -52,17 +52,21 @@ services:
       - /tmp/.X11-unix/:/tmp/.X11-unix/
       - /dev:/dev/
       - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
+      - ./launchFiles:/home/rover/ws_rover/volume/launchFiles
 
     # command: /bin/bash -c "sleep inf"
     command: /bin/bash -c "
-      ros2 launch depthai_examples stereo_inertial_node.launch.py \
-      depth_aligned:=False \
-      monoResolution:=400p \
-      enableSpatialDetection:=False \
-      enableRviz:=True \
-      syncNN:=False \
-      mode:=rectified \
-      enable_imu:=true"
+      ros2 launch /home/rover/ws_rover/volume/oak-stereo.launch.py "
+      
+    # command: /bin/bash -c "
+    #   ros2 launch depthai_examples stereo_inertial_node.launch.py \
+    #   depth_aligned:=False \
+    #   monoResolution:=400p \
+    #   enableSpatialDetection:=False \
+    #   enableRviz:=True \
+    #   syncNN:=False \
+    #   mode:=rectified \
+    #   enable_imu:=true"
 
   StaticTransform:
     image: "docker.io/alienkh/ros2_rover:${ros2_rover_tag:?error}"
@@ -71,7 +75,7 @@ services:
     tty: true
     privileged: true
     depends_on:
-      - Lidar
+      - oak
     restart: unless-stopped
     # network_mode: "host"
     networks:
@@ -113,13 +117,13 @@ services:
       - /tmp/.X11-unix/:/tmp/.X11-unix/
       # - /dev:/dev/
       - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
-      - ./:/home/rover/ws_rover/volume/
+      - ./start_rtabmap_stereo.sh:/home/rover/ws_rover/volume/start_rtabmap_stereo.sh
 
-    # command: /bin/bash -c "sleep inf"
+    command: /bin/bash -c "sleep inf"
     # entrypoint: ["/bin/sh", "-c"]
 
-    command: /bin/bash -c "
-      ros2 launch /home/rover/ws_rover/volume/rtabmap_Stereo.launch.py "
+    # command: /bin/bash -c "
+    #   . /home/rover/ws_rover/volume/start_rtabmap_stereo.sh "
 
   Nav2:
     image: "docker.io/alienkh/ros2_rover:${ros2_rover_tag:?error}"
@@ -230,7 +234,7 @@ services:
     command: /bin/bash -c "
       rosrun imu_filter_madgwick imu_filter_node \
       _use_mag:=false _use_magnetic_field_msg:=false _publish_tf:=false _world_frame:='enu' 
-       /imu/data_raw:=/stereo_inertial_publisher/imu \
+       /imu/data_raw:=/imu \
        /imu/data:=/imu/data "
 
   # rviz2:
