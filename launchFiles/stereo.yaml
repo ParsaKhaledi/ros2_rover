@@ -1,0 +1,64 @@
+/oak:
+  ros__parameters:
+    camera:
+      i_enable_imu: false
+      i_enable_ir: true
+      i_nn_type: none
+      # i_laser_dot_brightness: 1200
+      i_pipeline_type: RGBstereo    # to get rectify image should be in depth mode
+      # i_pipeline_type:
+      #   Depth
+        # if setting to depth mode the external calibration will be ignored
+        # in stereo mode the external calibration will just apply to camera_info topic
+
+      i_publish_synced_rect_pair: true
+      i_publish_right_rect: true
+
+    imu:
+      i_acc_freq: 200  # Accelerometer sensor frequency
+      i_gyro_freq: 200 # Gyroscope frequency
+      i_rot_freq: 200  # Rotation frequency
+      
+    stereo:
+      #   # i_low_bandwidth: true
+      i_publish_right_rect: true
+      i_publish_left_rect: true
+      i_publish_synced_rect_pair: true
+      # i_lr_check: true
+      #i_subpixel: false
+      #i_enable_brightness_filter: true
+      i_reverse_stereo_socket_order: true
+      #   # i_add_exposure_offset: false
+      #   # i_align_depth: true
+      #   # i_bilateral_sigma: 0
+      #   # i_board_socket_id: 0
+      #i_depth_filter_size: 5
+      #   # i_depth_preset: HIGH_ACCURACY
+      #   # i_disparity_width: DISPARITY_96
+      #   # i_enable_alpha_scaling: false
+      #   # i_enable_companding: false
+      #   i_enable_decimation_filter: true
+      #   # i_enable_disparity_shift: false
+      #i_enable_distortion_correction: false
+      #   i_enable_lazy_publisher: true
+      #   # i_enable_spatial_filter: true
+      #   # i_enable_speckle_filter: true
+      #   i_enable_temporal_filter: true
+      #i_enable_threshold_filter: true
+      i_stereo_conf_threshold: 90
+      i_subpixel: true
+      #i_output_depth: False
+    #   # i_exposure_offset: 0
+    #   # i_extended_disp: false
+    #rgb:
+    #  i_calibration_file: 'package://depthai_ros_driver/config/calibration/rgb.yaml'
+    left:
+      # i_low_bandwidth: true
+      i_resolution: "400P"
+      i_fps: 30.0
+    #  i_calibration_file: 'package://depthai_ros_driver/config/calibration/left.yaml'
+    right:
+      # i_low_bandwidth: true
+      i_resolution: "400P"
+      i_fps: 30.0
+    #  i_calibration_file: 'package://depthai_ros_driver/config/calibration/right.yaml'
