@@ -1,37 +1,4 @@
 services:
-  # Lidar:
-  #   image: "docker.io/alienkh/ros2_rover:${ros2_rover_tag:?error}"
-  #   container_name: lidar
-  #   hostname: lidar
-  #   tty: true
-  #   privileged: true
-  #   restart: unless-stopped
-  #   # network_mode: "host"
-  #   networks:
-  #     rover:
-  #       ipv4_address: "10.20.10.2"
-
-  #   environment:
-  #     DISPLAY: ${DISPLAY}
-  #     XAUTHORITY: ${XAUTH}
-        
-  #   volumes:
-  #     - /tmp/.X11-unix/:/tmp/.X11-unix/
-  #     - /dev:/dev/
-  #     - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
-
-  #   # command: /bin/bash -c "sleep inf"
-  #   # entrypoint: ["/bin/sh", "-c"]
-  #     # With RVIZ
-  #   # command: /bin/bash -c "
-  #   #   source /home/rover/ws_rover/install/setup.bash && ros2 launch sllidar_ros2 view_sllidar_c1_launch.py "
-  #   #  ros2 run tf2_ros static_transform_publisher 0 0 0 0 0 0 base_link laser"
-  #     # No Rviz
-  #   command: /bin/bash -c "
-  #      source /home/rover/ws_rover/install/setup.bash && ros2 launch sllidar_ros2 sllidar_c1_launch.py "
-  #     # ros2 run tf2_ros static_transform_publisher 0 0 0 0 0 0 base_link laser &\
-  #     # ros2 run rtabmap_odom icp_odometry  "
-
   oak:
     image: "docker.io/alienkh/ros2_rover:${ros2_rover_tag:?error}"
     container_name: oak
@@ -39,10 +6,10 @@ services:
     tty: true
     privileged: true
     restart: unless-stopped
-    network_mode: "host"
-    # networks:
-    #   rover:
-    #     ipv4_address: "10.20.10.3"
+    # network_mode: "host"
+    networks:
+      rover:
+        ipv4_address: "10.20.10.2"
 
     environment:
       DISPLAY: ${DISPLAY}
@@ -55,18 +22,20 @@ services:
       - ./launchFiles:/home/rover/ws_rover/volume/launchFiles
 
     # command: /bin/bash -c "sleep inf"
-    command: /bin/bash -c "
-      ros2 launch /home/rover/ws_rover/volume/oak-stereo.launch.py "
       
+    command: /bin/bash -c "
+      ros2 launch depthai_examples stereo_inertial_node.launch.py \
+      depth_aligned:=True \
+      monoResolution:=400p \
+      rgbResolution:=720p \
+      enableSpatialDetection:=False \
+      enableRviz:=True \
+      syncNN:=False \
+      mode:=rectified \
+      enable_imu:=true"
+
     # command: /bin/bash -c "
-    #   ros2 launch depthai_examples stereo_inertial_node.launch.py \
-    #   depth_aligned:=False \
-    #   monoResolution:=400p \
-    #   enableSpatialDetection:=False \
-    #   enableRviz:=True \
-    #   syncNN:=False \
-    #   mode:=rectified \
-    #   enable_imu:=true"
+    #   ros2 launch /home/rover/ws_rover/volume/launchFiles/oak-stereo.launch.py "
 
   StaticTransform:
     image: "docker.io/alienkh/ros2_rover:${ros2_rover_tag:?error}"
@@ -80,7 +49,7 @@ services:
     # network_mode: "host"
     networks:
       rover:
-        ipv4_address: "10.20.10.4"
+        ipv4_address: "10.20.10.3"
 
     # environment:
     #   DISPLAY: ${DISPLAY}
@@ -94,6 +63,30 @@ services:
 
     command: /bin/bash -c "
       ros2 run tf2_ros static_transform_publisher 0 0 0 0 0 0 base_link oak-d-base-frame "
+
+  imu_filter:
+    image: "docker.io/alienkh/ros2_rover:${ros2_rover_tag:?error}"
+    privileged: true
+    # restart: unless-stopped
+    # network_mode: "host"
+    networks:
+      rover:
+        ipv4_address: "10.20.10.4"
+    depends_on:
+      # - roscore
+      - oak
+    # environment:
+    #   DISPLAY: ${DISPLAY}
+    #   "XAUTHORITY": ${XAUTH}
+    volumes:
+      # - /tmp/.X11-unix/:/tmp/.X11-unix/
+      # - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
+      - /dev/:/dev/
+    command: /bin/bash -c "
+      ros2 run imu_filter_madgwick imu_filter_node \
+      _use_mag:=false _use_magnetic_field_msg:=false _publish_tf:=false _world_frame:='enu' 
+       /imu/data_raw:=/oak/imu/data \
+       /imu/data:=/imu/data "
 
   Rtabmap:
     image: "docker.io/alienkh/ros2_rover:${ros2_rover_tag:?error}"
@@ -115,15 +108,14 @@ services:
         
     volumes:
       - /tmp/.X11-unix/:/tmp/.X11-unix/
-      # - /dev:/dev/
       - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
-      - ./start_rtabmap_stereo.sh:/home/rover/ws_rover/volume/start_rtabmap_stereo.sh
+      - ./launchFiles:/home/rover/ws_rover/volume/launchFiles
 
     command: /bin/bash -c "sleep inf"
     # entrypoint: ["/bin/sh", "-c"]
 
     # command: /bin/bash -c "
-    #   . /home/rover/ws_rover/volume/start_rtabmap_stereo.sh "
+    #   . /home/rover/ws_rover/volume/launchFiles/start_rtabmap_stereo.sh "
 
   Nav2:
     image: "docker.io/alienkh/ros2_rover:${ros2_rover_tag:?error}"
@@ -183,59 +175,9 @@ services:
     command: /bin/bash -c "
       ros2 launch nav2_bringup rviz_launch.py "
     
-  
-  # Rtabmap_backend:
-  #   image: "docker.io/alienkh/ros2_rover:${ros2_rover_tag:?error}"
-  #   container_name: rtabmap
-  #   hostname: rtabmap
-  #   tty: true
-  #   privileged: true
-  #   restart: unless-stopped
-  #   # network_mode: "host"
-  #   # networks:
-  #   #   rover:
-  #   #     ipv4_address: "10.20.10.8"
-
-  #   environment:
-  #     DISPLAY: ${DISPLAY}
-  #     XAUTHORITY: ${XAUTH}
-        
-  #   volumes:
-  #     - /tmp/.X11-unix/:/tmp/.X11-unix/
-  #     - /dev:/dev/
-  #     - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
-  #     - ./:/home/${USER_NAME}/ws_rover/volume/
-
-  #   # command: /bin/bash -c "sleep inf"
-  #   # entrypoint: ["/bin/sh", "-c"]
-
-  #   command: /bin/bash -c "
-  #     ros2 run rtabmap_odom icp_odometry "
 
 
-  imu_filter:
-    image: "docker.io/alienkh/ros2_rover:${ros2_rover_tag:?error}"
-    privileged: true
-    # restart: unless-stopped
-    network_mode: "host"
-    # networks:
-    #   mins:
-    #     ipv4_address: "10.20.10.9"
-    depends_on:
-      # - roscore
-      - oak
-    # environment:
-    #   DISPLAY: ${DISPLAY}
-    #   "XAUTHORITY": ${XAUTH}
-    volumes:
-      # - /tmp/.X11-unix/:/tmp/.X11-unix/
-      # - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
-      - /dev/:/dev/
-    command: /bin/bash -c "
-      rosrun imu_filter_madgwick imu_filter_node \
-      _use_mag:=false _use_magnetic_field_msg:=false _publish_tf:=false _world_frame:='enu' 
-       /imu/data_raw:=/imu \
-       /imu/data:=/imu/data "
+
 
   # rviz2:
   #   image: "docker.io/alienkh/ros2_rover:${ros2_rover_tag:?error}"
