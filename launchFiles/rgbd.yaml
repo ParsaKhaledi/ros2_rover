@@ -2,7 +2,7 @@
   ros__parameters:
     camera:
       i_enable_imu: true
-      i_enable_ir: true
+      # i_enable_ir: true
       i_laser_dot_brightness: 800
       i_floodlight_brightness: 0
       i_enable_sync: true
@@ -32,6 +32,7 @@
       i_enable_distortion_correction: true
       i_update_ros_base_time_on_ros_msg: true
       i_set_disparity_to_depth_use_spec_translation: true
+      i_enable_spatial_nn: false
       # i_publish_topic: false
 
     rgb:

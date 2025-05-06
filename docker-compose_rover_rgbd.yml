@@ -66,6 +66,7 @@ services:
 
   imu_filter:
     image: "docker.io/alienkh/ros2_rover:${ros2_rover_tag:?error}"
+    container_name: imu_filter
     privileged: true
     # restart: unless-stopped
     # network_mode: "host"
@@ -79,14 +80,8 @@ services:
     #   DISPLAY: ${DISPLAY}
     #   "XAUTHORITY": ${XAUTH}
     volumes:
-      # - /tmp/.X11-unix/:/tmp/.X11-unix/
-      # - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
-      - /dev/:/dev/
-    command: /bin/bash -c "
-      ros2 run imu_filter_madgwick imu_filter_node \
-      _use_mag:=false _use_magnetic_field_msg:=false _publish_tf:=false _world_frame:='enu' 
-       /imu/data_raw:=/oak/imu/data \
-       /imu/data:=/imu/data "
+      - ./launchFiles:/home/rover/ws_rover/volume/launchFiles
+    command: /bin/bash -c ". /home/rover/ws_rover/volume/launchFiles/start_imu_filter.bash"
 
   Rtabmap:
     image: "docker.io/alienkh/ros2_rover:${ros2_rover_tag:?error}"
@@ -115,65 +110,65 @@ services:
     # entrypoint: ["/bin/sh", "-c"]
 
     command: /bin/bash -c "
-      . /home/rover/ws_rover/volume/launchFiles/start_rtabmap_rgbd.sh "
+      . /home/rover/ws_rover/volume/launchFiles/start_rtabmap_rgbd.bash "
 
-  # Nav2:
-  #   image: "docker.io/alienkh/ros2_rover:${ros2_rover_tag:?error}"
-  #   container_name: nav2
-  #   hostname: nav2
-  #   tty: true
-  #   privileged: true
-  #   restart: unless-stopped
-  #   depends_on:
-  #     - Rtabmap
-  #   # network_mode: "host"
-  #   networks:
-  #     rover:
-  #       ipv4_address: "10.20.10.6"
+  Nav2:
+    image: "docker.io/alienkh/ros2_rover:${ros2_rover_tag:?error}"
+    container_name: nav2
+    hostname: nav2
+    tty: true
+    privileged: true
+    restart: unless-stopped
+    depends_on:
+      - Rtabmap
+    # network_mode: "host"
+    networks:
+      rover:
+        ipv4_address: "10.20.10.6"
 
-  #   environment:
-  #     DISPLAY: ${DISPLAY}
-  #     XAUTHORITY: ${XAUTH}
+    environment:
+      DISPLAY: ${DISPLAY}
+      XAUTHORITY: ${XAUTH}
         
-  #   volumes:
-  #     - /tmp/.X11-unix/:/tmp/.X11-unix/
-  #     - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
-  #     - ./:/home/rover/ws_rover/volume/
+    volumes:
+      - /tmp/.X11-unix/:/tmp/.X11-unix/
+      - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
+      - ./launchFiles:/home/rover/ws_rover/volume/launchFiles
 
   #   # command: /bin/bash -c "sleep inf"
   #   # entrypoint: ["/bin/sh", "-c"]
 
-  #   command: /bin/bash -c "
-  #     ros2 launch nav2_bringup navigation_launch.py params_file:=/home/rover/ws_rover/volume/nav2.yaml  "
+    command: /bin/bash -c "
+      ros2 launch nav2_bringup navigation_launch.py params_file:=/home/rover/ws_rover/volume/launchFiles/nav2_icp.yaml  "
 
-  # Nav2_rviz:
-  #   image: "docker.io/alienkh/ros2_rover:${ros2_rover_tag:?error}"
-  #   container_name: nav2_rviz
-  #   hostname: nav2_rivz
-  #   tty: true
-  #   privileged: true
-  #   restart: unless-stopped
-  #   depends_on:
-  #     - Nav2
-  #   # network_mode: "host"
-  #   networks:
-  #     rover:
-  #       ipv4_address: "10.20.10.7"
+  Nav2_rviz:
+    image: "docker.io/alienkh/ros2_rover:${ros2_rover_tag:?error}"
+    container_name: nav2_rviz
+    hostname: nav2_rivz
+    tty: true
+    privileged: true
+    restart: unless-stopped
+    depends_on:
+      - Nav2
+    # network_mode: "host"
+    networks:
+      rover:
+        ipv4_address: "10.20.10.7"
 
-  #   environment:
-  #     DISPLAY: ${DISPLAY}
-  #     XAUTHORITY: ${XAUTH}
+    environment:
+      DISPLAY: ${DISPLAY}
+      XAUTHORITY: ${XAUTH}
         
-  #   volumes:
-  #     - /tmp/.X11-unix/:/tmp/.X11-unix/
-  #     - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
-  #     - ./:/home/rover/ws_rover/volume/
+    volumes:
+      - /tmp/.X11-unix/:/tmp/.X11-unix/
+      - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
+      - ./:/home/rover/ws_rover/volume/
 
-  #   # command: /bin/bash -c "sleep inf"
-  #   # entrypoint: ["/bin/sh", "-c"]
+    # command: /bin/bash -c "sleep inf"
+    # entrypoint: ["/bin/sh", "-c"]
 
-  #   command: /bin/bash -c "
-  #     ros2 launch nav2_bringup rviz_launch.py "
+    command: /bin/bash -c "
+      ros2 launch nav2_bringup rviz_launch.py "
     
 
 

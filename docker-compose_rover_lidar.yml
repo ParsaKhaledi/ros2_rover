@@ -115,13 +115,14 @@ services:
       - /tmp/.X11-unix/:/tmp/.X11-unix/
       # - /dev:/dev/
       - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
-      - ./:/home/rover/ws_rover/volume/
+      - ./launchFiles:/home/rover/ws_rover/volume/launchFiles
 
     # command: /bin/bash -c "sleep inf"
     # entrypoint: ["/bin/sh", "-c"]
 
     command: /bin/bash -c "
-      ros2 launch /home/rover/ws_rover/volume/rtabmap_icp_lidar.launch.py "
+      ros2 launch /home/rover/ws_rover/volume/launchFiles/rtabmap_icp_lidar.launch.py "
+
 
   Nav2:
     image: "docker.io/alienkh/ros2_rover:${ros2_rover_tag:?error}"
@@ -144,13 +145,13 @@ services:
     volumes:
       - /tmp/.X11-unix/:/tmp/.X11-unix/
       - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
-      - ./:/home/rover/ws_rover/volume/
+      - ./launchFiles:/home/rover/ws_rover/volume/launchFiles
 
-    # command: /bin/bash -c "sleep inf"
-    # entrypoint: ["/bin/sh", "-c"]
+  #   # command: /bin/bash -c "sleep inf"
+  #   # entrypoint: ["/bin/sh", "-c"]
 
     command: /bin/bash -c "
-      ros2 launch nav2_bringup navigation_launch.py params_file:=/home/rover/ws_rover/volume/nav2.yaml  "
+      ros2 launch nav2_bringup navigation_launch.py params_file:=/home/rover/ws_rover/volume/launchFiles/nav2_icp.yaml  "
 
   Nav2_rviz:
     image: "docker.io/alienkh/ros2_rover:${ros2_rover_tag:?error}"
@@ -210,30 +211,6 @@ services:
   #   command: /bin/bash -c "
   #     ros2 run rtabmap_odom icp_odometry "
 
-
-  imu_filter:
-    image: "docker.io/alienkh/ros2_rover:${ros2_rover_tag:?error}"
-    privileged: true
-    # restart: unless-stopped
-    network_mode: "host"
-    # networks:
-    #   mins:
-    #     ipv4_address: "10.20.10.9"
-    depends_on:
-      # - roscore
-      - oak
-    # environment:
-    #   DISPLAY: ${DISPLAY}
-    #   "XAUTHORITY": ${XAUTH}
-    volumes:
-      # - /tmp/.X11-unix/:/tmp/.X11-unix/
-      # - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
-      - /dev/:/dev/
-    command: /bin/bash -c "
-      rosrun imu_filter_madgwick imu_filter_node \
-      _use_mag:=false _use_magnetic_field_msg:=false _publish_tf:=false _world_frame:='enu' 
-       /imu/data_raw:=/stereo_inertial_publisher/imu \
-       /imu/data:=/imu/data "
 
   # rviz2:
   #   image: "docker.io/alienkh/ros2_rover:${ros2_rover_tag:?error}"
