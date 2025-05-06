@@ -2,7 +2,10 @@
   ros__parameters:
     camera:
       i_enable_imu: true
-      i_enable_ir: false
+      i_enable_ir: true
+      i_laser_dot_brightness: 800
+      i_floodlight_brightness: 0
+      i_enable_sync: true
       i_nn_type: none
       # i_laser_dot_brightness: 1200
       i_pipeline_type: RGBD    # to get rectify image should be in depth mode  RGBstereo
@@ -21,28 +24,34 @@
     stereo:
       i_publish_right_rect: false
       i_publish_left_rect: false
-      i_publish_synced_rect_pair: true
+      i_publish_synced_rect_pair: false
       i_reverse_stereo_socket_order: true
       i_stereo_conf_threshold: 90
       i_subpixel: false
-      i_publish_topic: false
+      i_depth_preset: HIGH_ACCURACY
+      i_enable_distortion_correction: true
+      i_update_ros_base_time_on_ros_msg: true
+      i_set_disparity_to_depth_use_spec_translation: true
+      # i_publish_topic: false
 
     rgb:
       # i_low_bandwidth: true
       i_resolution: "1080P"
       i_fps: 30.0
+      i_low_bandwidth: false
+      i_update_ros_base_time_on_ros_msg: true
 
-    left:
-      i_rect: true
-      i_resolution: "720p"
-      i_fps: 30.0
-      i_low_bandwidth: true
-      i_publish_topic: false
+    # left:
+    #   i_rect: true
+    #   i_resolution: "720p"
+    #   i_fps: 30.0
+    #   i_low_bandwidth: true
+    #   i_publish_topic: false
 
-    right:
-      i_rect: false
-      i_resolution: "720p"
-      i_fps: 30.0
-      i_low_bandwidth: true
-      i_publish_topic: false
+    # right:
+    #   i_rect: false
+    #   i_resolution: "720p"
+    #   i_fps: 30.0
+    #   i_low_bandwidth: true
+    #   i_publish_topic: false
 
