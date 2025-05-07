@@ -110,7 +110,7 @@ def launch_setup(context, *args, **kwargs):
                         plugin="depthai_ros_driver::Camera",
                         name=name,
                         parameters=[params_file, tf_params],
-                        remappings=[('/oak/imu/data', 'imu/data_raw')]
+                        remappings=[('/oak/imu/data', '/imu/data_raw')]
                     )
             ],
             arguments=['--ros-args', '--log-level', log_level],
