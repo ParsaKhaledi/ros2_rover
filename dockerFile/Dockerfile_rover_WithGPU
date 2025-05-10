@@ -61,8 +61,8 @@ RUN locale &&\
     ros-$ROS_DISTRO-rviz2* \
     ros-$ROS_DISTRO-rqt \
     ros-$ROS_DISTRO-rqt-image-view ros-$ROS_DISTRO-rqt-graph \
-    ros-$ROS_DISTRO-rqt-topic ros-$ROS_DISTRO-rqt-tf-tree \
-    ros-$ROS_DISTRO-navigation2 ros-$ROS_DISTRO-nav2-bringup \
+    ros-$ROS_DISTRO-rqt-topic      ros-$ROS_DISTRO-rqt-tf-tree \
+    ros-$ROS_DISTRO-navigation2    ros-$ROS_DISTRO-nav2-bringup \
     ros-dev-tools
 
 # Install OpenCV from source with CUDA
@@ -71,19 +71,19 @@ RUN mkdir -p ${WORKDIR}/OPENCV && cd ${WORKDIR}/OPENCV && \
     curl -L https://github.com/opencv/opencv_contrib/archive/${version}.zip -o opencv_contrib-${version}.zip && \
     unzip opencv-${version}.zip && unzip opencv_contrib-${version}.zip && rm opencv-${version}.zip opencv_contrib-${version}.zip && \
     cd opencv-${version} && \
-    mkdir relase && cd release && \
+    mkdir release && cd release && \
     cmake -D CMAKE_BUILD_TYPE=Release \
         -D CMAKE_INSTALL_PREFIX=/usr/local \
-        -D WITH_CUDA=ON \
-        -D WITH_CUDNN=ON \
+        -D WITH_CUDA=ON      \
+        -D WITH_CUDNN=ON     \
         -D CUDA_ARCH_BIN=8.7 \
-        -D CUDA_ARCH_PTX="" \
+        -D CUDA_ARCH_PTX=""  \
         -D OPENCV_GENERATE_PKGCONFIG=ON \
         -D WITH_GSTREAMER=ON \
-        -D WITH_LIBV4L=ON \
+        -D WITH_LIBV4L=ON    \
         -D ENABLE_FAST_MATH=1 \
-        -D CUDA_FAST_MATH=1 \
-        -D WITH_CUBLAS=ON \
+        -D CUDA_FAST_MATH=1  \
+        -D WITH_CUBLAS=ON    \
         -D OPENCV_EXTRA_MODULES_PATH=../../opencv_contrib-${version}/modules\
         -D BUILD_EXAMPLES=OFF \
         -D BUILD_opencv_python3=ON \
