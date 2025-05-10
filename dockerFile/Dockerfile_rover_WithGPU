@@ -30,7 +30,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 	libpcl-dev  libvtk9-dev qtbase5-dev libqt5opengl5-dev \
     libsqlite3-dev libcurl4-openssl-dev\
     libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev \
-    locales software-properties-common 
+    locales software-properties-common  apt-utils
 
 # Set up user and permissions
 RUN groupadd ${USER_NAME} --gid ${USER_GID} && \
@@ -78,7 +78,7 @@ RUN cd ${WORKDIR} && \
     cmake -D CMAKE_BUILD_TYPE=Release \
         -D CMAKE_INSTALL_PREFIX=/usr/local \
         -D WITH_CUDA=ON \
-        -D CUDA_ARCH_BIN="7.2" \
+        -D CUDA_ARCH_BIN=7.2 \
         -D CUDA_ARCH_PTX="" \
         -D ENABLE_FAST_MATH=1 \
         -D CUDA_FAST_MATH=1 \
