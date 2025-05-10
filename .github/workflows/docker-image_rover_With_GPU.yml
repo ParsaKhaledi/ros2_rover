@@ -1,4 +1,4 @@
-name: Docker Image Rover No GPU CI
+name: Docker Image Rover With GPU CI
 
 on:
   push:
