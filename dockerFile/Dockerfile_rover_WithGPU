@@ -29,15 +29,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libjpeg-dev libpng-dev libtiff-dev libv4l-dev libgtk-3-dev libatlas-base-dev \
 	libpcl-dev  libvtk9-dev qtbase5-dev libqt5opengl5-dev \
     libsqlite3-dev libcurl4-openssl-dev\
-    ros-$ROS_DISTRO-tf2-eigen \
-    ros-$ROS_DISTRO-rclcpp \
-    ros-$ROS_DISTRO-rmw-cyclonedds-cpp \
-    ros-$ROS_DISTRO-rviz2* \
-    ros-$ROS_DISTRO-rqt \
-    ros-$ROS_DISTRO-rqt-image-view ros-$ROS_DISTRO-rqt-graph \
-    ros-$ROS_DISTRO-rqt-topic ros-$ROS_DISTRO-rqt-tf-tree \
-    ros-$ROS_DISTRO-navigation2 ros-$ROS_DISTRO-nav2-bringup \
-    libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev 
+    libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev \
+    locales software-properties-common 
 
 # Set up user and permissions
 RUN groupadd ${USER_NAME} --gid ${USER_GID} && \
@@ -49,6 +42,27 @@ RUN groupadd ${USER_NAME} --gid ${USER_GID} && \
 # Switch to the non-root user
 USER ${USER_NAME}
 
+# Install Ros2 Humble and required packages
+RUN locale &&\
+    sudo locale-gen en_US en_US.UTF-8 && \
+    sudo update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8 && \
+    export LANG=en_US.UTF-8 && locale &&\
+    sudo add-apt-repository universe && \
+    sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg &&\
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] \
+    http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null &&\
+    sudo apt update && sudo apt upgrade -y && \
+    sudo apt install -y --no-install-recommends\
+    ros-$ROS_DISTRO-ros-base \
+    ros-$ROS_DISTRO-tf2-eigen \
+    ros-$ROS_DISTRO-rclcpp \
+    ros-$ROS_DISTRO-rmw-cyclonedds-cpp \
+    ros-$ROS_DISTRO-rviz2* \
+    ros-$ROS_DISTRO-rqt \
+    ros-$ROS_DISTRO-rqt-image-view ros-$ROS_DISTRO-rqt-graph \
+    ros-$ROS_DISTRO-rqt-topic ros-$ROS_DISTRO-rqt-tf-tree \
+    ros-$ROS_DISTRO-navigation2 ros-$ROS_DISTRO-nav2-bringup 
+    
 # Install OpenCV from source with CUDA
 RUN cd ${WORKDIR} && \
     git clone https://github.com/opencv/opencv.git && \
