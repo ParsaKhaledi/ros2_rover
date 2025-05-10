@@ -24,7 +24,7 @@ WORKDIR ${WORKDIR}
 # Install essential tools, ROS 2, and other dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     vim udev git sudo unzip curl cmake wget tmux apt-utils \
-    xauth xorg openbox ros-dev-tools gfortran\
+    xauth xorg openbox gfortran\
     python3 python3-pip python3-argcomplete \
     libjpeg-dev libpng-dev libtiff-dev libv4l-dev libgtk-3-dev libatlas-base-dev \
 	libpcl-dev  libvtk9-dev qtbase5-dev libqt5opengl5-dev \
@@ -61,8 +61,9 @@ RUN locale &&\
     ros-$ROS_DISTRO-rqt \
     ros-$ROS_DISTRO-rqt-image-view ros-$ROS_DISTRO-rqt-graph \
     ros-$ROS_DISTRO-rqt-topic ros-$ROS_DISTRO-rqt-tf-tree \
-    ros-$ROS_DISTRO-navigation2 ros-$ROS_DISTRO-nav2-bringup 
-    
+    ros-$ROS_DISTRO-navigation2 ros-$ROS_DISTRO-nav2-bringup \
+    ros-dev-tools
+
 # Install OpenCV from source with CUDA
 RUN cd ${WORKDIR} && \
     git clone https://github.com/opencv/opencv.git && \
