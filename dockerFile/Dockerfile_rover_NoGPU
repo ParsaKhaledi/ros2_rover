@@ -44,8 +44,8 @@ RUN groupadd ${USER_NAME} --gid ${USER_GID} && \
 USER ${USER_NAME}
 
 ### Install sllidar_ros2
-RUN mkdir ${WORKDIR}/src && cd ${WORKDIR}/ && git clone https://github.com/Slamtec/sllidar_ros2.git ./src &&\
-	source /opt/ros/$ROS_DISTRO/setup.bash && colcon build --symlink-install
+RUN mkdir ${WORKDIR}/src && cd ${WORKDIR}/ && git clone https://github.com/Slamtec/sllidar_ros2.git ./src 
+RUN source /opt/ros/$ROS_DISTRO/setup.bash && cd ${WORKDIR}/ && colcon build --symlink-install
 
 ### Install Micro XRCE-DDS
 # RUN cd /${USER_NAME} && git clone https://github.com/eProsima/Micro-XRCE-DDS-Agent.git && \
