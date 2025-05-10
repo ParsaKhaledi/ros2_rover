@@ -65,7 +65,7 @@ RUN locale &&\
     ros-dev-tools
 
 # Install OpenCV from source with CUDA
-RUN mkdir -p ${workdir}/OPENCV && cd ${WORKDIR}/OPENCV && \
+RUN mkdir -p ${WORKDIR}/OPENCV && cd ${WORKDIR}/OPENCV && \
     curl -L https://github.com/opencv/opencv/archive/${version}.zip -o opencv-${version}.zip && \
     curl -L https://github.com/opencv/opencv_contrib/archive/${version}.zip -o opencv_contrib-${version}.zip && \
     unzip opencv-${version}.zip && unzip opencv_contrib-${version}.zip && rm opencv-${version}.zip opencv_contrib-${version}.zip && \
