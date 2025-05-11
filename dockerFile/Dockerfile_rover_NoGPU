@@ -6,8 +6,8 @@ LABEL maintainer="Parsa Khaledi <pa.aerospace@gmail.com>"
 SHELL ["/bin/bash", "-c"]
 
 ARG USER_NAME=rover
-ARG USER_UID=1000
-ARG USER_GID=1000
+ARG USER_UID=1001
+ARG USER_GID=1001
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV QT_X11_NO_MITSHM=1
@@ -35,13 +35,15 @@ RUN apt update	&& apt upgrade -y  && \
 	ros-$ROS_DISTRO-rtabmap-ros 
 
 ### Set User	
-RUN set -eux; \
-    if getent group ${USER_NAME}; then \
-      echo "Group $USER_NAME exists, not creating."; \
-    else \
-      groupadd ${USER_NAME} --gid ${USER_GID}; \
-    fi; \
-    useradd -l -m ${USER_NAME} -u ${USER_UID} -g ${USER_GID} -s /bin/bash && \
+# RUN set -eux; \
+#     if getent group "${USER_NAME}"; then \
+#       echo "Group $USER_NAME exists, not creating."; \
+#     else \
+#       groupadd "${USER_NAME}" --gid "${USER_GID}"; \
+#     fi; \
+# 	\
+RUN groupadd "${USER_NAME}" --gid "${USER_GID}" && \
+	useradd -l -m ${USER_NAME} -u ${USER_UID} -g ${USER_GID} -s /bin/bash && \
 	echo "${USER_NAME} ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/${USER_NAME} && \
 	chmod 0440 /etc/sudoers.d/${USER_NAME} && chown -R ${USER_NAME}:${USER_NAME} /home/${USER_NAME}/ 
 
