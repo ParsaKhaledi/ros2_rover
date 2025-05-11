@@ -10,8 +10,8 @@ SHELL ["/bin/bash", "-c"]
 ARG USER_NAME=rover
 ARG USER_UID=1000
 ARG USER_GID=1000
-ARG OPENCV_VERSION=4.9.0 # Define OpenCV version as an ARG
-ARG version=4.11.0
+ARG OPENCV_VERSION=4.11.0 # Define OpenCV version as an ARG
+
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV QT_X11_NO_MITSHM=1
@@ -68,10 +68,10 @@ RUN locale &&\
 
 # Install OpenCV from source with CUDA
 # RUN mkdir -p ${WORKDIR}/OPENCV && cd ${WORKDIR}/OPENCV && \
-#     curl -L https://github.com/opencv/opencv/archive/${version}.zip -o opencv-${version}.zip && \
-#     curl -L https://github.com/opencv/opencv_contrib/archive/${version}.zip -o opencv_contrib-${version}.zip && \
-#     unzip opencv-${version}.zip && unzip opencv_contrib-${version}.zip && rm opencv-${version}.zip opencv_contrib-${version}.zip && \
-#     cd opencv-${version} && \
+#     curl -L https://github.com/opencv/opencv/archive/${OPENCV_VERSION}.zip -o opencv-${OPENCV_VERSION}.zip && \
+#     curl -L https://github.com/opencv/opencv_contrib/archive/${OPENCV_VERSION}.zip -o opencv_contrib-${OPENCV_VERSION}.zip && \
+#     unzip opencv-${OPENCV_VERSION}.zip && unzip opencv_contrib-${OPENCV_VERSION}.zip && rm opencv-${OPENCV_VERSION}.zip opencv_contrib-${OPENCV_VERSION}.zip && \
+#     cd opencv-${OPENCV_VERSION} && \
 #     mkdir release && cd release && \
 #     cmake -D CMAKE_BUILD_TYPE=Release \
 #         -D CMAKE_INSTALL_PREFIX=/usr/local \
@@ -85,7 +85,7 @@ RUN locale &&\
 #         -D ENABLE_FAST_MATH=1 \
 #         -D CUDA_FAST_MATH=1  \
 #         -D WITH_CUBLAS=ON    \
-#         -D OPENCV_EXTRA_MODULES_PATH=../../opencv_contrib-${version}/modules\
+#         -D OPENCV_EXTRA_MODULES_PATH=../../opencv_contrib-${OPENCV_VERSION}/modules\
 #         -D BUILD_EXAMPLES=OFF \
 #         -D BUILD_opencv_python3=ON \
 #         -D BUILD_opencv_python2=OFF \
@@ -102,7 +102,7 @@ RUN locale &&\
 #     cd ${WORKDIR}/ && rm -rf OPENCV # Clean up
 
 # Create source directory and clone the sllidar_ros2 and rtabmap_ros repository
-RUN mkdir -p ${WORKDIR}/src && \
+RUN /bin.bash -c "mkdir -p ${WORKDIR}/src && \
     cd ${WORKDIR}/src && \
 	source /opt/ros/$ROS_DISTRO/setup.bash && \
     git clone https://github.com/Slamtec/sllidar_ros2.git 				&& \
@@ -111,7 +111,7 @@ RUN mkdir -p ${WORKDIR}/src && \
 	cd .. && sudo rosdep init && rosdep update && \
     rosdep install --from-paths src --ignore-src -r -y && \
     source /opt/ros/$ROS_DISTRO/setup.bash && \
-    colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release -DWITH_CUDA=ON
+    colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release -DWITH_CUDA=ON"
 	# --parallel-workers $(nproc)
 
 # Add tmux configuration
