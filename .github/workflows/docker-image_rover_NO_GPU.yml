@@ -12,7 +12,7 @@ on:
 env:
   Registery: docker.io
   ImageName: alienkh/ros2_rover
-  ImageTag: ${{ github.run_number }}
+  ImageTag: jazzy_${{ github.run_number }}
 
 jobs:
 
