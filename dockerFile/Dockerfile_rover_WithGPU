@@ -1,6 +1,6 @@
 ARG ROS_DISTRO=humble
 # Use a base image that supports CUDA on Jetson
-FROM nvcr.io/nvidia/l4t-jetpack:35.4.1
+FROM nvcr.io/nvidia/l4t-jetpack:r36.4.0
 
 
 LABEL maintainer="Parsa Khaledi <pa.aerospace@gmail.com>"
