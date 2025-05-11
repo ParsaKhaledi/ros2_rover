@@ -1,6 +1,7 @@
 ARG ROS_DISTRO=humble
 # Use a base image that supports CUDA on Jetson
-FROM nvcr.io/nvidia/l4t-cuda:12.6.11-runtime
+FROM nvcr.io/nvidia/l4t-jetpack:35.4.1
+
 
 LABEL maintainer="Parsa Khaledi <pa.aerospace@gmail.com>"
 
@@ -66,39 +67,39 @@ RUN locale &&\
     ros-dev-tools
 
 # Install OpenCV from source with CUDA
-RUN mkdir -p ${WORKDIR}/OPENCV && cd ${WORKDIR}/OPENCV && \
-    curl -L https://github.com/opencv/opencv/archive/${version}.zip -o opencv-${version}.zip && \
-    curl -L https://github.com/opencv/opencv_contrib/archive/${version}.zip -o opencv_contrib-${version}.zip && \
-    unzip opencv-${version}.zip && unzip opencv_contrib-${version}.zip && rm opencv-${version}.zip opencv_contrib-${version}.zip && \
-    cd opencv-${version} && \
-    mkdir release && cd release && \
-    cmake -D CMAKE_BUILD_TYPE=Release \
-        -D CMAKE_INSTALL_PREFIX=/usr/local \
-        -D WITH_CUDA=ON      \
-        -D WITH_CUDNN=ON     \
-        -D CUDA_ARCH_BIN=8.7 \
-        -D CUDA_ARCH_PTX=""  \
-        -D OPENCV_GENERATE_PKGCONFIG=ON \
-        -D WITH_GSTREAMER=ON \
-        -D WITH_LIBV4L=ON    \
-        -D ENABLE_FAST_MATH=1 \
-        -D CUDA_FAST_MATH=1  \
-        -D WITH_CUBLAS=ON    \
-        -D OPENCV_EXTRA_MODULES_PATH=../../opencv_contrib-${version}/modules\
-        -D BUILD_EXAMPLES=OFF \
-        -D BUILD_opencv_python3=ON \
-        -D BUILD_opencv_python2=OFF \
-        -D PYTHON_EXECUTABLE=/usr/bin/python3 \
-        -D BUILD_TESTS=OFF \
-        -D BUILD_PERF_TESTS=OFF \
-        -D CMAKE_INSTALL_PREFIX=/usr/local .. && \
-    make -j$(nproc) && \
-    sudo make install && \
-    echo 'export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH' >> ~/.bashrc && \
-    echo 'export PYTHONPATH=/usr/local/lib/python3.10/site-packages/:$PYTHONPATH' >> ~/.bashrc && \
-    source ~/.bashrc && \
-    sudo ldconfig && \
-    cd ${WORKDIR}/ && rm -rf OPENCV # Clean up
+# RUN mkdir -p ${WORKDIR}/OPENCV && cd ${WORKDIR}/OPENCV && \
+#     curl -L https://github.com/opencv/opencv/archive/${version}.zip -o opencv-${version}.zip && \
+#     curl -L https://github.com/opencv/opencv_contrib/archive/${version}.zip -o opencv_contrib-${version}.zip && \
+#     unzip opencv-${version}.zip && unzip opencv_contrib-${version}.zip && rm opencv-${version}.zip opencv_contrib-${version}.zip && \
+#     cd opencv-${version} && \
+#     mkdir release && cd release && \
+#     cmake -D CMAKE_BUILD_TYPE=Release \
+#         -D CMAKE_INSTALL_PREFIX=/usr/local \
+#         -D WITH_CUDA=ON      \
+#         -D WITH_CUDNN=ON     \
+#         -D CUDA_ARCH_BIN=8.7 \
+#         -D CUDA_ARCH_PTX=""  \
+#         -D OPENCV_GENERATE_PKGCONFIG=ON \
+#         -D WITH_GSTREAMER=ON \
+#         -D WITH_LIBV4L=ON    \
+#         -D ENABLE_FAST_MATH=1 \
+#         -D CUDA_FAST_MATH=1  \
+#         -D WITH_CUBLAS=ON    \
+#         -D OPENCV_EXTRA_MODULES_PATH=../../opencv_contrib-${version}/modules\
+#         -D BUILD_EXAMPLES=OFF \
+#         -D BUILD_opencv_python3=ON \
+#         -D BUILD_opencv_python2=OFF \
+#         -D PYTHON_EXECUTABLE=/usr/bin/python3 \
+#         -D BUILD_TESTS=OFF \
+#         -D BUILD_PERF_TESTS=OFF \
+#         -D CMAKE_INSTALL_PREFIX=/usr/local .. && \
+#     make -j$(nproc) && \
+#     sudo make install && \
+#     echo 'export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH' >> ~/.bashrc && \
+#     echo 'export PYTHONPATH=/usr/local/lib/python3.10/site-packages/:$PYTHONPATH' >> ~/.bashrc && \
+#     source ~/.bashrc && \
+#     sudo ldconfig && \
+#     cd ${WORKDIR}/ && rm -rf OPENCV # Clean up
 
 # Create source directory and clone the sllidar_ros2 and rtabmap_ros repository
 RUN mkdir -p ${WORKDIR}/src && \
