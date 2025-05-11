@@ -110,6 +110,7 @@ RUN mkdir -p ${WORKDIR}/src && \
     git clone --branch ros2 https://github.com/introlab/rtabmap_ros.git && \
 	cd .. && sudo rosdep init && rosdep update && \
     rosdep install --from-paths src --ignore-src -r -y && \
+    source /opt/ros/$ROS_DISTRO/setup.bash && \
     colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release -DWITH_CUDA=ON
 	# --parallel-workers $(nproc)
 
