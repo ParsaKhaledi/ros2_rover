@@ -102,7 +102,7 @@ RUN locale &&\
 #     cd ${WORKDIR}/ && rm -rf OPENCV # Clean up
 
 # Create source directory and clone the sllidar_ros2 and rtabmap_ros repository
-RUN /bin.bash -c "mkdir -p ${WORKDIR}/src && \
+RUN /bin/bash -c "mkdir -p ${WORKDIR}/src && \
     cd ${WORKDIR}/src && \
 	source /opt/ros/$ROS_DISTRO/setup.bash && \
     git clone https://github.com/Slamtec/sllidar_ros2.git 				&& \
