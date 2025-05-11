@@ -14,7 +14,7 @@ ENV QT_X11_NO_MITSHM=1
 ENV LANG=en_US.UTF-8
 ENV ROS2_INSTALL_PATH=/opt/ros/$ROS_DISTRO
 ENV WORKDIR=/home/${USER_NAME}/ws_rover
-ENV ROS_DISTRO=humble
+ENV ROS_DISTRO=jazzy
 WORKDIR ${WORKDIR}
 
 ### Install essentials, Nav2 and rtabmap 
