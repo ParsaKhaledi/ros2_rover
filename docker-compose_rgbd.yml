@@ -7,10 +7,13 @@ services:
     privileged: true
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "/home/rover/ws_rover/volume/HealthCheck/check_topic_pub.bash","/oak/rgb/image_raw"]
-      interval: 5s
-      timeout: 3s
-      retries: 3
+      test: ["CMD", "/home/rover/ws_rover/HealthCheck/check_multi_topic_pub.bash", "3",
+             "/imu/data_raw",
+             "/oak/rgb/image_raw","/oak/stereo/image_raw" ]      
+      interval:     10s
+      timeout:      7s
+      retries:      3
+      start_period: 7s
 
     # network_mode: "host"
     networks:
@@ -26,7 +29,7 @@ services:
       - /dev:/dev/
       - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
       - ./launchFiles:/home/rover/ws_rover/volume/launchFiles
-      - ./HealthCheck/:/home/rover/ws_rover/volume/HealthCheck
+      - ./HealthCheck/:/home/rover/ws_rover/HealthCheck/
 
     # command: /bin/bash -c "sleep inf"
       
@@ -51,7 +54,9 @@ services:
     tty: true
     privileged: true
     depends_on:
-      - oak
+      oak: 
+        condition: service_healthy
+
     restart: unless-stopped
     # network_mode: "host"
     networks:
@@ -81,13 +86,24 @@ services:
       rover:
         ipv4_address: "10.20.10.4"
     depends_on:
-      # - roscore
-      - oak
+      oak:
+        condition: service_healthy
+      StaticTransform:
+        condition: service_started
+
+    healthcheck:
+      test: ["CMD", "/home/rover/ws_rover/HealthCheck/check_multi_topic_pub.bash", "1",
+             "/imu/data"]
+      interval:     5s
+      timeout:      3s
+      retries:      3
+      start_period: 3s
     # environment:
     #   DISPLAY: ${DISPLAY}
     #   "XAUTHORITY": ${XAUTH}
     volumes:
       - ./launchFiles:/home/rover/ws_rover/volume/launchFiles
+      - ./HealthCheck/:/home/rover/ws_rover/HealthCheck/
     command: /bin/bash -c ". /home/rover/ws_rover/volume/launchFiles/start_imu_filter.bash"
 
   Rtabmap:
@@ -98,7 +114,21 @@ services:
     privileged: true
     restart: unless-stopped
     depends_on:
-      - StaticTransform
+      oak:
+        condition: service_healthy
+      StaticTransform:
+        condition: service_started
+      imu_filter:
+        condition: service_healthy 
+
+    healthcheck:
+      test: ["CMD", "/home/rover/ws_rover/HealthCheck/check_multi_topic_pub.bash", "4",
+             "/rtabmap/odom", "/rtabmap/map", "/rtabmap/octomap_grid", "/imu/data"]
+      interval:     5s
+      timeout:      3s
+      retries:      3
+      start_period: 7s
+
     # network_mode: "host"
     networks:
       rover:
@@ -112,6 +142,7 @@ services:
       - /tmp/.X11-unix/:/tmp/.X11-unix/
       - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
       - ./launchFiles:/home/rover/ws_rover/volume/launchFiles
+      - ./HealthCheck/:/home/rover/ws_rover/HealthCheck/
 
     # command: /bin/bash -c "sleep inf"
     # entrypoint: ["/bin/sh", "-c"]
@@ -127,7 +158,14 @@ services:
     privileged: true
     restart: unless-stopped
     depends_on:
-      - Rtabmap
+      oak:
+        condition: service_healthy
+      StaticTransform:
+        condition: service_started
+      imu_filter:
+        condition: service_healthy 
+      Rtabmap: 
+        condition: service_healthy
     # network_mode: "host"
     networks:
       rover:
@@ -141,12 +179,13 @@ services:
       - /tmp/.X11-unix/:/tmp/.X11-unix/
       - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
       - ./launchFiles:/home/rover/ws_rover/volume/launchFiles
+      - ./HealthCheck/:/home/rover/ws_rover/HealthCheck/
 
   #   # command: /bin/bash -c "sleep inf"
   #   # entrypoint: ["/bin/sh", "-c"]
 
     command: /bin/bash -c "
-      ros2 launch nav2_bringup navigation_launch.py params_file:=/home/rover/ws_rover/volume/launchFiles/nav2_icp.yaml  "
+      ros2 launch nav2_bringup navigation_launch.py params_file:=/home/rover/ws_rover/volume/launchFiles/nav2_camera.yaml  "
 
   Nav2_rviz:
     image: "docker.io/alienkh/ros2_rover:${ros2_rover_tag:?error}"
@@ -156,7 +195,8 @@ services:
     privileged: true
     restart: unless-stopped
     depends_on:
-      - Nav2
+      Nav2:
+        condition: service_started
     # network_mode: "host"
     networks:
       rover:
@@ -170,6 +210,7 @@ services:
       - /tmp/.X11-unix/:/tmp/.X11-unix/
       - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
       - ./:/home/rover/ws_rover/volume/
+      - ./HealthCheck/:/home/rover/ws_rover/HealthCheck/
 
     # command: /bin/bash -c "sleep inf"
     # entrypoint: ["/bin/sh", "-c"]
