@@ -6,7 +6,13 @@ services:
     tty: true
     privileged: true
     restart: unless-stopped
-    # network_mode: "host"
+    healthcheck:
+      test: ["CMD", "/home/rover/ws_rover/HealthCheck/check_topic_pub.bash", "/scan"]      
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 7s
+      # network_mode: "host"
     networks:
       rover:
         ipv4_address: "10.20.10.2"
@@ -19,6 +25,7 @@ services:
       - /tmp/.X11-unix/:/tmp/.X11-unix/
       - /dev:/dev/
       - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
+      - ./HealthCheck/:/home/rover/ws_rover/HealthCheck/
 
     # command: /bin/bash -c "sleep inf"
     # entrypoint: ["/bin/sh", "-c"]
@@ -101,8 +108,17 @@ services:
     privileged: true
     restart: unless-stopped
     depends_on:
-      - StaticTransform
+      Lidar:
+        condition: service_healthy
+      StaticTransform:
+        condition: service_started
     # network_mode: "host"
+    healthcheck:
+      test: ["CMD", "/home/rover/ws_rover/HealthCheck/check_topic_pub.bash", "/icp_odom"]      
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 7s
     networks:
       rover:
         ipv4_address: "10.20.10.5"
@@ -115,6 +131,7 @@ services:
       - /tmp/.X11-unix/:/tmp/.X11-unix/
       # - /dev:/dev/
       - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
+      - ./HealthCheck/:/home/rover/ws_rover/HealthCheck/
       - ./launchFiles:/home/rover/ws_rover/volume/launchFiles
 
     # command: /bin/bash -c "sleep inf"
@@ -132,7 +149,12 @@ services:
     privileged: true
     restart: unless-stopped
     depends_on:
-      - Rtabmap
+      Lidar:
+        condition: service_healthy
+      StaticTransform:
+        condition: service_started
+      Rtabmap:
+        condition: service_healthy
     # network_mode: "host"
     networks:
       rover:
@@ -145,6 +167,7 @@ services:
     volumes:
       - /tmp/.X11-unix/:/tmp/.X11-unix/
       - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
+      - ./HealthCheck/:/home/rover/ws_rover/HealthCheck/
       - ./launchFiles:/home/rover/ws_rover/volume/launchFiles
 
   #   # command: /bin/bash -c "sleep inf"
@@ -161,7 +184,14 @@ services:
     privileged: true
     restart: unless-stopped
     depends_on:
-      - Nav2
+      Lidar:
+        condition: service_healthy
+      StaticTransform:
+        condition: service_started
+      Rtabmap:
+        condition: service_healthy
+      Nav2:
+        condition: service_started
     # network_mode: "host"
     networks:
       rover:
@@ -174,6 +204,7 @@ services:
     volumes:
       - /tmp/.X11-unix/:/tmp/.X11-unix/
       - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
+      - ./HealthCheck/:/home/rover/ws_rover/HealthCheck/
       - ./:/home/rover/ws_rover/volume/
 
     # command: /bin/bash -c "sleep inf"
@@ -223,7 +254,14 @@ services:
   #       ipv4_address: "10.20.10.10"
   #   # restart: unless-stopped
   #   depends_on:
-  #     - Lidar
+  #     Lidar:
+  #       condition: service_healthy
+  #     StaticTransform:
+  #       condition: service_started
+  #     Rtabmap:
+  #       condition: service_healthy
+  #     Nav2:
+  #       condition: service_healthy
   #   environment:
   #     DISPLAY: ${DISPLAY}
   #     "XAUTHORITY": ${XAUTH}
