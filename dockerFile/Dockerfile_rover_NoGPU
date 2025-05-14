@@ -1,24 +1,24 @@
-ARG ROS_DISTRO=humble
-FROM ros:${ROS_DISTRO}-ros-base-jammy
+ARG ROS_DISTRO=jazzy
+FROM ros:${ROS_DISTRO}-ros-base
 
 LABEL maintainer="Parsa Khaledi <pa.aerospace@gmail.com>"
 
 SHELL ["/bin/bash", "-c"]
 
-ARG USER_NAME=rover
-ARG USER_UID=1000
-ARG USER_GID=1000
+ARG USER_NAME=roverq
+ARG USER_UID=1001
+ARG USER_GID=1001
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV QT_X11_NO_MITSHM=1
 ENV LANG=en_US.UTF-8
 ENV ROS2_INSTALL_PATH=/opt/ros/$ROS_DISTRO
 ENV WORKDIR=/home/${USER_NAME}/ws_rover
-ENV ROS_DISTRO=humble
+ENV ROS_DISTRO=jazzy
 WORKDIR ${WORKDIR}
 
 ### Install essentials, Nav2 and rtabmap 
-RUN apt update 1>/dev/null	&& apt upgrade -y 1>/dev/null && \
+RUN apt update	1>/dev/null && apt upgrade -y 1>/dev/nul && \
 	apt install -y --no-install-recommends \
 	vim udev git sudo unzip curl cmake wget tmux apt-utils\
 	ros-dev-tools \
@@ -32,19 +32,20 @@ RUN apt update 1>/dev/null	&& apt upgrade -y 1>/dev/null && \
 	ros-$ROS_DISTRO-depthai-ros \
 	ros-$ROS_DISTRO-imu-filter-madgwick \
 	ros-$ROS_DISTRO-navigation2 ros-$ROS_DISTRO-nav2-bringup \
-	ros-$ROS_DISTRO-rtabmap-ros 1>/dev/null
+	ros-$ROS_DISTRO-rtabmap-ros 1>/dev/nul
 
 ### Set User	
 RUN groupadd ${USER_NAME} --gid ${USER_GID} && \
     useradd -l -m ${USER_NAME} -u ${USER_UID} -g ${USER_GID} -s /bin/bash && \
-	echo "${USER_NAME} ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/${USER_NAME} && \
-	chmod 0440 /etc/sudoers.d/${USER_NAME} && chown -R ${USER_NAME}:${USER_NAME} /home/${USER_NAME}/ 
+    echo "${USER_NAME} ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/${USER_NAME} && \
+    chmod 0440 /etc/sudoers.d/${USER_NAME} && \
+    chown -R ${USER_NAME}:${USER_NAME} /home/${USER_NAME}
 
 ### Change user
 USER ${USER_NAME}
 
 ### Install sllidar_ros2
-RUN mkdir ${WORKDIR}/src && cd ${WORKDIR}/ && git clone https://github.com/Slamtec/sllidar_ros2.git ./src &&\
+RUN mkdir ${WORKDIR}/src && cd ${WORKDIR}/ && git clone https://github.com/Slamtec/sllidar_ros2.git ./src && \
 	source /opt/ros/$ROS_DISTRO/setup.bash && colcon build --symlink-install
 
 ### Install Micro XRCE-DDS

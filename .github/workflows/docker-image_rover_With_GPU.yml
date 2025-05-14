@@ -1,10 +1,10 @@
-name: Docker Image Rover No GPU CI
+name: Docker Image Rover With GPU CI
 
 on:
   push:
     paths:
-      - 'dockerFile/Dockerfile_rover_NoGPU'
-      - '.github/workflows/docker-image_rover_NO_GPU.yml'
+      - 'dockerFile/Dockerfile_rover_WithGPU'
+      - '.github/workflows/docker-image_rover_With_GPU.yml'
     # branches: [ "docker" ]
   # pull_request:
   #   branches: [ "main" ]
@@ -12,7 +12,7 @@ on:
 env:
   Registery: docker.io
   ImageName: alienkh/ros2_rover
-  ImageTag: jazzy_${{ github.run_number }}
+  ImageTag: GPU_${{ github.run_number }}
 
 jobs:
 
@@ -67,8 +67,8 @@ jobs:
           push: true
           tags: ${{ env.Registery }}/${{ env.ImageName }}:${{ env.ImageTag }}
           labels: ${{ steps.meta.outputs.labels }}
-          platforms: linux/amd64,linux/arm64
-          file: ./dockerFile/Dockerfile_rover_NoGPU
+          platforms: linux/arm64 # linux/amd64,
+          file: ./dockerFile/Dockerfile_rover_WithGPU
           build-args: |
             BUILD_DATE=${DATE_RFC3339}
             VERSION=${VERSION}

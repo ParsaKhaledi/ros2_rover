@@ -1,0 +1,128 @@
+ARG ROS_DISTRO=humble
+# Use a base image that supports CUDA on Jetson
+FROM nvcr.io/nvidia/l4t-jetpack:r36.4.0
+
+
+LABEL maintainer="Parsa Khaledi <pa.aerospace@gmail.com>"
+
+SHELL ["/bin/bash", "-c"]
+
+ARG USER_NAME=rover
+ARG USER_UID=1000
+ARG USER_GID=1000
+ARG OPENCV_VERSION=4.11.0 # Define OpenCV version as an ARG
+
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV QT_X11_NO_MITSHM=1
+ENV LANG=en_US.UTF-8
+ENV ROS2_INSTALL_PATH=/opt/ros/$ROS_DISTRO
+ENV WORKDIR=/home/${USER_NAME}/ws_rover
+ENV ROS_DISTRO=humble
+
+# Set the working directory
+WORKDIR ${WORKDIR}
+
+# Install essential tools, ROS 2, and other dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    vim udev git sudo unzip curl cmake wget tmux apt-utils \
+    xauth xorg openbox gfortran\
+    python3 python3-pip python3-argcomplete \
+    libjpeg-dev libpng-dev libtiff-dev libv4l-dev libgtk-3-dev libatlas-base-dev \
+	libpcl-dev  libvtk9-dev qtbase5-dev libqt5opengl5-dev \
+    libsqlite3-dev libcurl4-openssl-dev\
+    libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev \
+    locales software-properties-common  apt-utils
+
+# Set up user and permissions
+RUN groupadd ${USER_NAME} --gid ${USER_GID} && \
+    useradd -l -m ${USER_NAME} -u ${USER_UID} -g ${USER_GID} -s /bin/bash && \
+    echo "${USER_NAME} ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/${USER_NAME} && \
+    chmod 0440 /etc/sudoers.d/${USER_NAME} && \
+    chown -R ${USER_NAME}:${USER_NAME} /home/${USER_NAME}
+
+# Switch to the non-root user
+USER ${USER_NAME}
+
+# Install Ros2 Humble and required packages
+RUN locale &&\
+    sudo locale-gen en_US en_US.UTF-8 && \
+    sudo update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8 && \
+    export LANG=en_US.UTF-8 && locale &&\
+    sudo add-apt-repository universe && \
+    sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg &&\
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] \
+    http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null &&\
+    sudo apt update && sudo apt upgrade -y && \
+    sudo apt install -y --no-install-recommends\
+    ros-$ROS_DISTRO-ros-base \
+    ros-$ROS_DISTRO-tf2-eigen \
+    ros-$ROS_DISTRO-rclcpp \
+    ros-$ROS_DISTRO-rmw-cyclonedds-cpp \
+    ros-$ROS_DISTRO-rviz2* \
+    ros-$ROS_DISTRO-rqt \
+    ros-$ROS_DISTRO-rqt-image-view ros-$ROS_DISTRO-rqt-graph \
+    ros-$ROS_DISTRO-rqt-topic      ros-$ROS_DISTRO-rqt-tf-tree \
+    ros-$ROS_DISTRO-navigation2    ros-$ROS_DISTRO-nav2-bringup \
+    ros-dev-tools
+
+# Install OpenCV from source with CUDA
+# RUN mkdir -p ${WORKDIR}/OPENCV && cd ${WORKDIR}/OPENCV && \
+#     curl -L https://github.com/opencv/opencv/archive/${OPENCV_VERSION}.zip -o opencv-${OPENCV_VERSION}.zip && \
+#     curl -L https://github.com/opencv/opencv_contrib/archive/${OPENCV_VERSION}.zip -o opencv_contrib-${OPENCV_VERSION}.zip && \
+#     unzip opencv-${OPENCV_VERSION}.zip && unzip opencv_contrib-${OPENCV_VERSION}.zip && rm opencv-${OPENCV_VERSION}.zip opencv_contrib-${OPENCV_VERSION}.zip && \
+#     cd opencv-${OPENCV_VERSION} && \
+#     mkdir release && cd release && \
+#     cmake -D CMAKE_BUILD_TYPE=Release \
+#         -D CMAKE_INSTALL_PREFIX=/usr/local \
+#         -D WITH_CUDA=ON      \
+#         -D WITH_CUDNN=ON     \
+#         -D CUDA_ARCH_BIN=8.7 \
+#         -D CUDA_ARCH_PTX=""  \
+#         -D OPENCV_GENERATE_PKGCONFIG=ON \
+#         -D WITH_GSTREAMER=ON \
+#         -D WITH_LIBV4L=ON    \
+#         -D ENABLE_FAST_MATH=1 \
+#         -D CUDA_FAST_MATH=1  \
+#         -D WITH_CUBLAS=ON    \
+#         -D OPENCV_EXTRA_MODULES_PATH=../../opencv_contrib-${OPENCV_VERSION}/modules\
+#         -D BUILD_EXAMPLES=OFF \
+#         -D BUILD_opencv_python3=ON \
+#         -D BUILD_opencv_python2=OFF \
+#         -D PYTHON_EXECUTABLE=/usr/bin/python3 \
+#         -D BUILD_TESTS=OFF \
+#         -D BUILD_PERF_TESTS=OFF \
+#         -D CMAKE_INSTALL_PREFIX=/usr/local .. && \
+#     make -j$(nproc) && \
+#     sudo make install && \
+#     echo 'export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH' >> ~/.bashrc && \
+#     echo 'export PYTHONPATH=/usr/local/lib/python3.10/site-packages/:$PYTHONPATH' >> ~/.bashrc && \
+#     source ~/.bashrc && \
+#     sudo ldconfig && \
+#     cd ${WORKDIR}/ && rm -rf OPENCV # Clean up
+
+# Create source directory and clone the sllidar_ros2 and rtabmap_ros repository
+RUN /bin/bash -c "mkdir -p ${WORKDIR}/src && \
+    cd ${WORKDIR}/src && \
+	source /opt/ros/$ROS_DISTRO/setup.bash && \
+    git clone https://github.com/Slamtec/sllidar_ros2.git 				&& \
+    git clone https://github.com/introlab/rtabmap.git  					&& \
+    git clone --branch ros2 https://github.com/introlab/rtabmap_ros.git && \
+	cd .. && sudo rosdep init && rosdep update && \
+    rosdep install --from-paths src --ignore-src -r -y && \
+    source /opt/ros/$ROS_DISTRO/setup.bash && \
+    colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release -DWITH_CUDA=ON"
+	# --parallel-workers $(nproc)
+
+# Add tmux configuration
+RUN echo "set -g mouse on" >> ~/.tmux.conf
+
+# Add ROS environment sourcing to .bashrc
+RUN echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> ~/.bashrc && \
+    echo "source ${WORKDIR}/install/setup.bash" >> ~/.bashrc
+
+# Finalize
+USER root
+RUN rm -rf /var/lib/apt/lists/* && \
+    apt autoremove -y
+USER ${USER_NAME}
