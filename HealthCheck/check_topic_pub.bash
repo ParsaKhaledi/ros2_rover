@@ -1,5 +1,5 @@
 #!/bin/bash
-
+source /opt/ros/${ROS_DISTRO}/setup.bash
 # Function to check the health of a ROS 2 topic
 check_ros2_topic_health() {
   topic_name="$1"
