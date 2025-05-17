@@ -121,8 +121,8 @@ services:
         condition: service_healthy 
 
     healthcheck:
-      test: ["CMD", "/home/rover/ws_rover/HealthCheck/check_multi_topic_pub.bash", "4",
-             "/rtabmap/odom", "/rtabmap/map", "/rtabmap/octomap_grid", "/imu/data"]
+      test: ["CMD", "/home/rover/ws_rover/HealthCheck/check_multi_topic_pub.bash", "2",
+             "/rtabmap/odom", "/imu/data"]
       interval:     5s
       timeout:      3s
       retries:      3
