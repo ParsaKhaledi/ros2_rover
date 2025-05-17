@@ -26,8 +26,9 @@ source /opt/ros/$ROS_DISTRO/setup.bash
 ros2 launch rtabmap_launch rtabmap.launch.py   \
      args:='-d  --Optimizer/GravitySigma 0.1 --Vis/FeatureType 10 --Kp/DetectorStrategy 10 --Grid/MapFrameProjection true  \
      --NormalsSegmentation false --Grid/MaxGroundHeight 0.5  --Grid/MaxObstacleHeight 2.2 --RGBD/StartAtOrigin true         \
-      --Grid/RayTracing true --Grid/3D true'    \
+     --Grid/RayTracing true --Grid/3D true  --Grid/FlatObstacleDetected true --Grid/MaxGroundHeight 0.0    \
+     --Grid/MaxObstacleHeight "2.0"   '    \
      rgb_topic:=/oak/rgb/image_raw   depth_topic:=/oak/stereo/image_raw    camera_info_topic:=/oak/rgb/camera_info \
      imu_topic:=/imu/data     wait_imu_to_init:=true     approx_sync:=true  approx_sync_max_interval:=0.01    \
-     use_sim_time:=true  qos:=2    rtabmapviz:=true     rviz:=false   subscribe_rgbd:=false
+     use_sim_time:=false  qos:=2    rtabmapviz:=true     rviz:=false   subscribe_rgbd:=false
 
