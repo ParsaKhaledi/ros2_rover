@@ -56,7 +56,6 @@ services:
     depends_on:
       oak: 
         condition: service_healthy
-
     restart: unless-stopped
     # network_mode: "host"
     networks:

@@ -7,10 +7,11 @@ services:
     privileged: true
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "/home/rover/ws_rover/HealthCheck/check_topic_pub.bash", "/scan"]      
-      interval: 10s
-      timeout: 5s
-      retries: 3
+      test: ["CMD", "/home/rover/ws_rover/HealthCheck/check_multi_topic_pub.bash", "1",
+             "/scan"]      
+      interval:     10s
+      timeout:      5s
+      retries:      3
       start_period: 7s
       # network_mode: "host"
     networks:
@@ -79,7 +80,8 @@ services:
     tty: true
     privileged: true
     depends_on:
-      - Lidar
+      Lidar:
+        condition: service_healthy
     restart: unless-stopped
     # network_mode: "host"
     networks:
@@ -114,10 +116,11 @@ services:
         condition: service_started
     # network_mode: "host"
     healthcheck:
-      test: ["CMD", "/home/rover/ws_rover/HealthCheck/check_topic_pub.bash", "/icp_odom"]      
-      interval: 5s
-      timeout: 5s
-      retries: 10
+      test: ["CMD", "/home/rover/ws_rover/HealthCheck/check_multi_topic_pub.bash", "1",
+             "/icp_odom"]      
+      interval:     5s
+      timeout:      5s
+      retries:      10
       start_period: 7s
     networks:
       rover:
@@ -174,7 +177,7 @@ services:
   #   # entrypoint: ["/bin/sh", "-c"]
 
     command: /bin/bash -c "
-      ros2 launch nav2_bringup navigation_launch.py params_file:=/home/rover/ws_rover/volume/launchFiles/nav2_icp.yaml  "
+      ros2 launch nav2_bringup navigation_launch.py params_file:=/home/rover/ws_rover/volume/launchFiles/nav2_lidar.yaml  "
 
   Nav2_rviz:
     image: "docker.io/alienkh/ros2_rover:${ros2_rover_tag:?error}"
@@ -184,12 +187,6 @@ services:
     privileged: true
     restart: unless-stopped
     depends_on:
-      Lidar:
-        condition: service_healthy
-      StaticTransform:
-        condition: service_started
-      Rtabmap:
-        condition: service_healthy
       Nav2:
         condition: service_started
     # network_mode: "host"
