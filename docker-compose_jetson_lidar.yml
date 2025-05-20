@@ -29,6 +29,7 @@ services:
       - /tmp/.X11-unix/:/tmp/.X11-unix/
       - /dev:/dev/
       - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
+      - ./ws_rover:/home/rover/ws_rover
 
     # command: /bin/bash -c "sleep inf"
     # entrypoint: ["/bin/sh", "-c"]
@@ -43,44 +44,45 @@ services:
       # ros2 run tf2_ros static_transform_publisher 0 0 0 0 0 0 base_link laser &\
       # ros2 run rtabmap_odom icp_odometry  "
 
-  # StaticTransform:
-  #   image: "172.0.0.200:5000/ros2_rover:v1"
-  #   container_name: st
-  #   hostname: st
-  #   tty: true
-  #   privileged: true
-  #   depends_on:
-  #     - Lidar
-  #   restart: unless-stopped
-  #   # runtime: nvidia
-  #   # deploy:
-  #   #   resources:
-  #   #     reservations:
-  #   #       devices:
-  #   #         - driver: nvidia
-  #   #           count: 1
-  #   #           capabilities: [gpu]
-  #   # network_mode: "host"
-  #   networks:
-  #     rover:
-  #       ipv4_address: "10.20.10.4"
+  StaticTransform:
+    image: "172.0.0.200:5000/ros2_rover:v1"
+    container_name: st
+    hostname: st
+    tty: true
+    privileged: true
+    depends_on:
+      - Lidar
+    restart: unless-stopped
+    # runtime: nvidia
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: 1
+    #           capabilities: [gpu]
+    # network_mode: "host"
+    networks:
+      rover:
+        ipv4_address: "10.20.10.4"
 
-  #   # environment:
-  #   #   - NVIDIA_VISIBLE_DEVICES=all
-  #   #   - NVIDIA_DRIVER_CAPABILITIES=compute,utility
-  #   #   - DISPLAY: ${DISPLAY}
-  #   #   - XAUTHORITY: ${XAUTH}
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=compute,utility
+      - DISPLAY: ${DISPLAY}
+      - XAUTHORITY: ${XAUTH}
         
-  #   volumes:
-  #     - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
+    volumes:
+      - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
+      - ./ws_rover:/home/rover/ws_rover
 
-  #   # command: /bin/bash -c "sleep inf"
-  #   # entrypoint: ["/bin/sh", "-c"]
+    # command: /bin/bash -c "sleep inf"
+    # entrypoint: ["/bin/sh", "-c"]
 
-  #   command: /bin/bash -c "
-  #     source /opt/ros/humble/setup.bash && \
-  #     ros2 run tf2_ros static_transform_publisher 0 0 0 0 0 0 base_link laser "
-  #     # & ros2 run tf2_ros static_transform_publisher 0 0 0 0 0 0 base_link oak-d-base-frame "
+    command: /bin/bash -c "
+      source /opt/ros/humble/setup.bash && \
+      ros2 run tf2_ros static_transform_publisher 0 0 0 0 0 0 base_link laser "
+      # & ros2 run tf2_ros static_transform_publisher 0 0 0 0 0 0 base_link oak-d-base-frame "
 
   # Rtabmap:
   #   image: "172.0.0.200:5000/ros2_rover:v1"
@@ -115,6 +117,8 @@ services:
   #     # - /dev:/dev/
   #     - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
   #     - ./launchFiles:/home/rover/ws_rover/volume/launchFiles
+  #     - ./ws_rover:/home/rover/ws_rover
+
 
   #   command: /bin/bash -c "sleep inf"
   #   # entrypoint: ["/bin/sh", "-c"]
@@ -156,6 +160,7 @@ services:
   #     - /tmp/.X11-unix/:/tmp/.X11-unix/
   #     - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
   #     - ./launchFiles:/home/rover/ws_rover/volume/launchFiles
+  #     - ./ws_rover:/home/rover/ws_rover
 
   # #   # command: /bin/bash -c "sleep inf"
   # #   # entrypoint: ["/bin/sh", "-c"]
@@ -196,6 +201,7 @@ services:
   #     - /tmp/.X11-unix/:/tmp/.X11-unix/
   #     - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
   #     - ./:/home/rover/ws_rover/volume/
+  #     - ./ws_rover:/home/rover/ws_rover
 
   #   # command: /bin/bash -c "sleep inf"
   #   # entrypoint: ["/bin/sh", "-c"]
