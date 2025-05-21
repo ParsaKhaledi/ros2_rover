@@ -1,6 +1,6 @@
 services:
   Lidar:
-    image: "172.0.0.200:5000/ros2_rover:v1"
+    image: "172.0.0.200:5000/ros2_rover:${ros2_rover_GPU_tag:?error}"
     container_name: lidar
     hostname: lidar
     tty: true
@@ -53,7 +53,7 @@ services:
       # ros2 run rtabmap_odom icp_odometry  "
 
   StaticTransform:
-    image: "172.0.0.200:5000/ros2_rover:v1"
+    image: "172.0.0.200:5000/ros2_rover:${ros2_rover_GPU_tag:?error}"
     container_name: st
     hostname: st
     tty: true
@@ -95,7 +95,7 @@ services:
       # & ros2 run tf2_ros static_transform_publisher 0 0 0 0 0 0 base_link oak-d-base-frame "
 
   Rtabmap:
-    image: "172.0.0.200:5000/ros2_rover:v1"
+    image: "172.0.0.200:5000/ros2_rover:${ros2_rover_GPU_tag:?error}"
     container_name: rtabmap
     hostname: rtabmap
     tty: true
@@ -146,7 +146,7 @@ services:
       ros2 launch /home/rover/ws_rover/volume/launchFiles/rtabmap_icp_lidar.launch.py "
 
 # Nav2:
-#     image: "172.0.0.200:5000/ros2_rover:v1"
+#     image: "172.0.0.200:5000/ros2_rover:${ros2_rover_GPU_tag:?error}"
 #     container_name: nav2
 #     hostname: nav2
 #     tty: true
@@ -193,7 +193,7 @@ services:
 #       ros2 launch nav2_bringup navigation_launch.py params_file:=/home/rover/ws_rover/volume/launchFiles/nav2_icp.yaml  "
 
   # Nav2_rviz:
-  #   image: "172.0.0.200:5000/ros2_rover:v1"
+  #   image: "172.0.0.200:5000/ros2_rover:${ros2_rover_GPU_tag:?error}"
   #   container_name: nav2_rviz
   #   hostname: nav2_rivz
   #   tty: true
@@ -235,7 +235,7 @@ services:
     
   
   # Rtabmap_backend:
-  #   image: "172.0.0.200:5000/ros2_rover:v1"
+  #   image: "172.0.0.200:5000/ros2_rover:${ros2_rover_GPU_tag:?error}"
   #   container_name: rtabmap
   #   hostname: rtabmap
   #   tty: true
@@ -272,7 +272,7 @@ services:
 
 
   # rviz2:
-  #   image: "172.0.0.200:5000/ros2_rover:v1"
+  #   image: "172.0.0.200:5000/ros2_rover:${ros2_rover_GPU_tag:?error}"
   #   container_name: rviz2
   #   hostname: rviz2
   #   tty: true

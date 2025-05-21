@@ -1,6 +1,6 @@
 services:
   oak:
-    image: "docker.io/alienkh/ros2_rover:${ros2_rover_tag:?error}"
+    image: "172.0.0.200:5000/ros2_rover:${ros2_rover_GPU_tag:?error}"
     container_name: oak
     hostname: oak
     restart: unless-stopped
@@ -48,7 +48,7 @@ services:
       ros2 launch /home/rover/ws_rover/volume/launchFiles/oak-rgbd.launch.py "
 
   StaticTransform:
-    image: "docker.io/alienkh/ros2_rover:${ros2_rover_tag:?error}"
+    image: "172.0.0.200:5000/ros2_rover:${ros2_rover_GPU_tag:?error}"
     container_name: st
     hostname: st
     tty: true
@@ -77,7 +77,7 @@ services:
       ros2 run tf2_ros static_transform_publisher 0 0 0 0 0 0 base_link oak-d-base-frame "
 
   imu_filter:
-    image: "docker.io/alienkh/ros2_rover:${ros2_rover_tag:?error}"
+    image: "172.0.0.200:5000/ros2_rover:${ros2_rover_GPU_tag:?error}"
     container_name: imu_filter
     privileged: true
     # restart: unless-stopped
@@ -96,7 +96,7 @@ services:
     command: /bin/bash -c ". /home/rover/ws_rover/volume/launchFiles/start_imu_filter.bash"
 
   Rtabmap:
-    image: "docker.io/alienkh/ros2_rover:${ros2_rover_tag:?error}"
+    image: "172.0.0.200:5000/ros2_rover:${ros2_rover_GPU_tag:?error}"
     container_name: rtabmap
     hostname: rtabmap
     tty: true
@@ -135,7 +135,7 @@ services:
       . /home/rover/ws_rover/volume/launchFiles/start_rtabmap_rgbd.bash "
 
   Nav2:
-    image: "docker.io/alienkh/ros2_rover:${ros2_rover_tag:?error}"
+    image: "172.0.0.200:5000/ros2_rover:${ros2_rover_GPU_tag:?error}"
     container_name: nav2
     hostname: nav2
     tty: true
@@ -174,7 +174,7 @@ services:
       ros2 launch nav2_bringup navigation_launch.py params_file:=/home/rover/ws_rover/volume/launchFiles/nav2_icp.yaml  "
 
   Nav2_rviz:
-    image: "docker.io/alienkh/ros2_rover:${ros2_rover_tag:?error}"
+    image: "172.0.0.200:5000/ros2_rover:${ros2_rover_GPU_tag:?error}"
     container_name: nav2_rviz
     hostname: nav2_rivz
     tty: true
@@ -217,7 +217,7 @@ services:
 
 
   # rviz2:
-  #   image: "docker.io/alienkh/ros2_rover:${ros2_rover_tag:?error}"
+  #   image: "172.0.0.200:5000/ros2_rover:${ros2_rover_GPU_tag:?error}"
   #   container_name: rviz2
   #   hostname: rviz2
   #   tty: true
