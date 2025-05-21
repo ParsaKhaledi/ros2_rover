@@ -1,6 +1,6 @@
 services:
   Lidar:
-    image: "docker.io/alienkh/ros2_rover:${ros2_rover_tag:?error}"
+    image: "${registery}/ros2_rover:${ros2_rover_tag:?error}"
     container_name: lidar
     hostname: lidar
     tty: true
@@ -42,7 +42,7 @@ services:
       # ros2 run rtabmap_odom icp_odometry  "
 
   # oak:
-    # image: "docker.io/alienkh/ros2_rover:${ros2_rover_tag:?error}"
+    # image: "${registery}/ros2_rover:${ros2_rover_tag:?error}"
     # container_name: oak
     # hostname: oak
     # tty: true
@@ -74,7 +74,7 @@ services:
     #   enable_imu:=true"
 
   StaticTransform:
-    image: "docker.io/alienkh/ros2_rover:${ros2_rover_tag:?error}"
+    image: "${registery}/ros2_rover:${ros2_rover_tag:?error}"
     container_name: st
     hostname: st
     tty: true
@@ -103,7 +103,7 @@ services:
       # & ros2 run tf2_ros static_transform_publisher 0 0 0 0 0 0 base_link oak-d-base-frame "
 
   Rtabmap:
-    image: "docker.io/alienkh/ros2_rover:${ros2_rover_tag:?error}"
+    image: "${registery}/ros2_rover:${ros2_rover_tag:?error}"
     container_name: rtabmap
     hostname: rtabmap
     tty: true
@@ -145,7 +145,7 @@ services:
 
 
   Nav2:
-    image: "docker.io/alienkh/ros2_rover:${ros2_rover_tag:?error}"
+    image: "${registery}/ros2_rover:${ros2_rover_tag:?error}"
     container_name: nav2
     hostname: nav2
     tty: true
@@ -180,7 +180,7 @@ services:
       ros2 launch nav2_bringup navigation_launch.py params_file:=/home/rover/ws_rover/volume/launchFiles/nav2_lidar.yaml  "
 
   Nav2_rviz:
-    image: "docker.io/alienkh/ros2_rover:${ros2_rover_tag:?error}"
+    image: "${registery}/ros2_rover:${ros2_rover_tag:?error}"
     container_name: nav2_rviz
     hostname: nav2_rivz
     tty: true
@@ -212,7 +212,7 @@ services:
     
   
   # Rtabmap_backend:
-  #   image: "docker.io/alienkh/ros2_rover:${ros2_rover_tag:?error}"
+  #   image: "${registery}/ros2_rover:${ros2_rover_tag:?error}"
   #   container_name: rtabmap
   #   hostname: rtabmap
   #   tty: true
@@ -241,7 +241,7 @@ services:
 
 
   # rviz2:
-  #   image: "docker.io/alienkh/ros2_rover:${ros2_rover_tag:?error}"
+  #   image: "${registery}/ros2_rover:${ros2_rover_tag:?error}"
   #   container_name: rviz2
   #   hostname: rviz2
   #   tty: true
