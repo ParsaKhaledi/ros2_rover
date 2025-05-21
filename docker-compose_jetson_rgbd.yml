@@ -198,8 +198,9 @@ services:
     environment:
       - NVIDIA_VISIBLE_DEVICES=all
       - NVIDIA_DRIVER_CAPABILITIES=compute,utility
-      - DISPLAY: ${DISPLAY}
-      - XAUTHORITY: ${XAUTH}
+      - DISPLAY=${DISPLAY}
+      - XAUTHORITY=${XAUTH}
+
         
     volumes:
       - /tmp/.X11-unix/:/tmp/.X11-unix/
@@ -228,11 +229,12 @@ services:
   #   # restart: unless-stopped
   #   depends_on:
   #     - Lidar
-  #   environment:
-      # - NVIDIA_VISIBLE_DEVICES=all
-      # - NVIDIA_DRIVER_CAPABILITIES=compute,utility
-      # - DISPLAY: ${DISPLAY}
-      # - XAUTHORITY: ${XAUTH}
+    # environment:
+    #   - NVIDIA_VISIBLE_DEVICES=all
+    #   - NVIDIA_DRIVER_CAPABILITIES=compute,utility
+    #   - DISPLAY=${DISPLAY}
+    #   - XAUTHORITY=${XAUTH}
+
   #   volumes:
   #     - /tmp/.X11-unix/:/tmp/.X11-unix/
   #   command: /bin/bash -c "
