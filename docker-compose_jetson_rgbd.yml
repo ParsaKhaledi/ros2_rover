@@ -39,6 +39,7 @@ services:
       - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
       - ./HealthCheck/:/home/rover/ws_rover/HealthCheck/
       - ./launchFiles:/home/rover/ws_rover/volume/launchFiles
+      - ./ws_rover:/home/rover/ws_rover
 
     # command: /bin/bash -c "sleep inf"
       
@@ -80,6 +81,7 @@ services:
     volumes:
       - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
       - ./HealthCheck/:/home/rover/ws_rover/HealthCheck/
+      - ./ws_rover:/home/rover/ws_rover
 
     # command: /bin/bash -c "sleep inf"
     # entrypoint: ["/bin/sh", "-c"]
@@ -116,6 +118,8 @@ services:
     volumes:
       - ./HealthCheck/:/home/rover/ws_rover/HealthCheck/
       - ./launchFiles:/home/rover/ws_rover/volume/launchFiles
+      - ./ws_rover:/home/rover/ws_rover
+
     command: /bin/bash -c ". /home/rover/ws_rover/volume/launchFiles/start_imu_filter.bash"
 
   Rtabmap:
@@ -166,6 +170,7 @@ services:
       - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
       - ./HealthCheck/:/home/rover/ws_rover/HealthCheck/
       - ./launchFiles:/home/rover/ws_rover/volume/launchFiles
+      - ./ws_rover:/home/rover/ws_rover
 
     # command: /bin/bash -c "sleep inf"
     # entrypoint: ["/bin/sh", "-c"]
@@ -214,6 +219,7 @@ services:
       - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
       - ./HealthCheck/:/home/rover/ws_rover/HealthCheck/
       - ./launchFiles:/home/rover/ws_rover/volume/launchFiles
+      - ./ws_rover:/home/rover/ws_rover
 
   #   # command: /bin/bash -c "sleep inf"
   #   # entrypoint: ["/bin/sh", "-c"]
@@ -256,6 +262,7 @@ services:
       - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
       - ./HealthCheck/:/home/rover/ws_rover/HealthCheck/
       - ./:/home/rover/ws_rover/volume/
+      - ./ws_rover:/home/rover/ws_rover
 
     # command: /bin/bash -c "sleep inf"
     # entrypoint: ["/bin/sh", "-c"]
