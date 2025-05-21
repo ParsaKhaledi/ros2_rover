@@ -148,7 +148,7 @@ services:
       source /home/rover/ws_rover/install/setup.bash && \
       ros2 launch /home/rover/ws_rover/volume/launchFiles/rtabmap_icp_lidar.launch.py "
 
-Nav2:
+  Nav2:
     image: "${registery_GPU}/ros2_rover:${ros2_rover_GPU_tag:?error}"
     container_name: nav2
     hostname: nav2
@@ -195,7 +195,7 @@ Nav2:
       source /home/rover/ws_rover/install/setup.bash && \
       ros2 launch nav2_bringup navigation_launch.py params_file:=/home/rover/ws_rover/volume/launchFiles/nav2_icp.yaml  "
 
-Nav2_rviz:
+  Nav2_rviz:
     image: "${registery_GPU}/ros2_rover:${ros2_rover_GPU_tag:?error}"
     container_name: nav2_rviz
     hostname: nav2_rivz
