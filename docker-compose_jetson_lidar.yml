@@ -193,7 +193,7 @@ services:
 
     command: /bin/bash -c "
       source /home/rover/ws_rover/install/setup.bash && \
-      ros2 launch nav2_bringup navigation_launch.py params_file:=/home/rover/ws_rover/volume/launchFiles/nav2_icp.yaml  "
+      ros2 launch nav2_bringup navigation_launch.py params_file:=/home/rover/ws_rover/volume/launchFiles/nav2_lidar.yaml  "
 
   Nav2_rviz:
     image: "${registery_GPU}/ros2_rover:${ros2_rover_GPU_tag:?error}"
