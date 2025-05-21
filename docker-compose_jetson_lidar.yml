@@ -233,7 +233,7 @@ services:
     # entrypoint: ["/bin/sh", "-c"]
 
     command: /bin/bash -c "
-      source /opt/ros/humble/setup.bash && \
+      source /home/rover/ws_rover/install/setup.bash && \
       ros2 launch nav2_bringup rviz_launch.py "
     
   
