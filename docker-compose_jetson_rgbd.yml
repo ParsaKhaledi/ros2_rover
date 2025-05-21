@@ -45,6 +45,7 @@ services:
     #   enable_imu:=true"
 
     command: /bin/bash -c "
+      source /home/rover/ws_rover/install/setup.bash && \
       ros2 launch /home/rover/ws_rover/volume/launchFiles/oak-rgbd.launch.py "
 
   StaticTransform:
@@ -74,6 +75,7 @@ services:
     # entrypoint: ["/bin/sh", "-c"]
 
     command: /bin/bash -c "
+      source /home/rover/ws_rover/install/setup.bash && \
       ros2 run tf2_ros static_transform_publisher 0 0 0 0 0 0 base_link oak-d-base-frame "
 
   imu_filter:
@@ -132,6 +134,7 @@ services:
     # entrypoint: ["/bin/sh", "-c"]
 
     command: /bin/bash -c "
+      source /home/rover/ws_rover/install/setup.bash && \
       . /home/rover/ws_rover/volume/launchFiles/start_rtabmap_rgbd.bash "
 
   Nav2:
@@ -171,6 +174,7 @@ services:
   #   # entrypoint: ["/bin/sh", "-c"]
 
     command: /bin/bash -c "
+      source /home/rover/ws_rover/install/setup.bash && \
       ros2 launch nav2_bringup navigation_launch.py params_file:=/home/rover/ws_rover/volume/launchFiles/nav2_icp.yaml  "
 
   Nav2_rviz:
@@ -211,6 +215,7 @@ services:
     # entrypoint: ["/bin/sh", "-c"]
 
     command: /bin/bash -c "
+      source /home/rover/ws_rover/install/setup.bash && \
       ros2 launch nav2_bringup rviz_launch.py "
     
 
