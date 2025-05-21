@@ -12,7 +12,7 @@ services:
       interval:     10s
       timeout:      5s
       retries:      3
-      start_period: 7s
+      start_period: 5s
     runtime: nvidia
     deploy:
       resources:
