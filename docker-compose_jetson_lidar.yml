@@ -6,6 +6,13 @@ services:
     tty: true
     privileged: true
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "/home/rover/ws_rover/HealthCheck/check_multi_topic_pub.bash", "1",
+             "/scan"]      
+      interval:     10s
+      timeout:      5s
+      retries:      3
+      start_period: 7s
     runtime: nvidia
     deploy:
       resources:
@@ -29,6 +36,7 @@ services:
       - /tmp/.X11-unix/:/tmp/.X11-unix/
       - /dev:/dev/
       - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
+      - ./HealthCheck/:/home/rover/ws_rover/HealthCheck/
       - ./ws_rover:/home/rover/ws_rover
 
     # command: /bin/bash -c "sleep inf"
@@ -51,7 +59,8 @@ services:
     tty: true
     privileged: true
     depends_on:
-      - Lidar
+      Lidar:
+        condition: service_healthy
     restart: unless-stopped
     # runtime: nvidia
     # deploy:
@@ -74,6 +83,7 @@ services:
         
     volumes:
       - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
+      - ./HealthCheck/:/home/rover/ws_rover/HealthCheck/
       - ./ws_rover:/home/rover/ws_rover
 
     # command: /bin/bash -c "sleep inf"
@@ -84,90 +94,103 @@ services:
       ros2 run tf2_ros static_transform_publisher 0 0 0 0 0 0 base_link laser "
       # & ros2 run tf2_ros static_transform_publisher 0 0 0 0 0 0 base_link oak-d-base-frame "
 
-  # Rtabmap:
-  #   image: "172.0.0.200:5000/ros2_rover:v1"
-  #   container_name: rtabmap
-  #   hostname: rtabmap
-  #   tty: true
-  #   privileged: true
-  #   restart: unless-stopped
-  #   depends_on:
-  #     - StaticTransform
-  #   runtime: nvidia
-  #   deploy:
-  #     resources:
-  #       reservations:
-  #         devices:
-  #           - driver: nvidia
-  #             count: 1
-  #             capabilities: [gpu]
-  #   # network_mode: "host"
-  #   networks:
-  #     rover:
-  #       ipv4_address: "10.20.10.5"
+  Rtabmap:
+    image: "172.0.0.200:5000/ros2_rover:v1"
+    container_name: rtabmap
+    hostname: rtabmap
+    tty: true
+    privileged: true
+    restart: unless-stopped
+    depends_on:
+      - StaticTransform
+    runtime: nvidia
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    # network_mode: "host"
+    healthcheck:
+      test: ["CMD", "/home/rover/ws_rover/HealthCheck/check_multi_topic_pub.bash", "1",
+             "/icp_odom"]      
+      interval:     5s
+      timeout:      5s
+      retries:      10
+      start_period: 7s
+    networks:
+      rover:
+        ipv4_address: "10.20.10.5"
 
-  #   environment:
-  #     - NVIDIA_VISIBLE_DEVICES=all
-  #     - NVIDIA_DRIVER_CAPABILITIES=compute,utility
-  #     - DISPLAY=${DISPLAY}
-  #     - XAUTHORITY=${XAUTH}}
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=compute,utility
+      - DISPLAY=${DISPLAY}
+      - XAUTHORITY=${XAUTH}}
         
-  #   volumes:
-  #     - /tmp/.X11-unix/:/tmp/.X11-unix/
-  #     # - /dev:/dev/
-  #     - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
-  #     - ./launchFiles:/home/rover/ws_rover/volume/launchFiles
-  #     - ./ws_rover:/home/rover/ws_rover
+    volumes:
+      - /tmp/.X11-unix/:/tmp/.X11-unix/
+      # - /dev:/dev/
+      - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
+      - ./HealthCheck/:/home/rover/ws_rover/HealthCheck/
+      - ./launchFiles:/home/rover/ws_rover/volume/launchFiles
+      - ./ws_rover:/home/rover/ws_rover
 
 
   #   command: /bin/bash -c "sleep inf"
   #   # entrypoint: ["/bin/sh", "-c"]
 
-  #   # command: /bin/bash -c "
-  #   #   source /home/rover/ws_rover/install/setup.bash && \
-  #   #   ros2 launch /home/rover/ws_rover/volume/launchFiles/rtabmap_icp_lidar.launch.py "
+    command: /bin/bash -c "
+      source /home/rover/ws_rover/install/setup.bash && \
+      ros2 launch /home/rover/ws_rover/volume/launchFiles/rtabmap_icp_lidar.launch.py "
 
+# Nav2:
+#     image: "172.0.0.200:5000/ros2_rover:v1"
+#     container_name: nav2
+#     hostname: nav2
+#     tty: true
+#     privileged: true
+#     restart: unless-stopped
+#     depends_on:
+#       Lidar:
+#         condition: service_healthy
+#       StaticTransform:
+#         condition: service_started
+#       Rtabmap:
+#         condition: service_healthy
+#     runtime: nvidia
+#     deploy:
+#       resources:
+#         reservations:
+#           devices:
+#             - driver: nvidia
+#               count: 1
+#               capabilities: [gpu]
+#     # network_mode: "host"
+#     networks:
+#       rover:
+#         ipv4_address: "10.20.10.6"
 
-  # Nav2:
-  #   image: "172.0.0.200:5000/ros2_rover:v1"
-  #   container_name: nav2
-  #   hostname: nav2
-  #   tty: true
-  #   privileged: true
-  #   restart: unless-stopped
-  #   depends_on:
-  #     - Rtabmap
-  #   runtime: nvidia
-  #   deploy:
-  #     resources:
-  #       reservations:
-  #         devices:
-  #           - driver: nvidia
-  #             count: 1
-  #             capabilities: [gpu]
-  #   # network_mode: "host"
-  #   networks:
-  #     rover:
-  #       ipv4_address: "10.20.10.6"
-
-  #   environment:
-  #     - NVIDIA_VISIBLE_DEVICES=all
-  #     - NVIDIA_DRIVER_CAPABILITIES=compute,utility
-  #     - DISPLAY=${DISPLAY}
-  #     - XAUTHORITY=${XAUTH}
+#     environment:
+#       - NVIDIA_VISIBLE_DEVICES=all
+#       - NVIDIA_DRIVER_CAPABILITIES=compute,utility
+#       - DISPLAY=${DISPLAY}
+#       - XAUTHORITY=${XAUTH}
         
-  #   volumes:
-  #     - /tmp/.X11-unix/:/tmp/.X11-unix/
-  #     - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
-  #     - ./launchFiles:/home/rover/ws_rover/volume/launchFiles
-  #     - ./ws_rover:/home/rover/ws_rover
+#     volumes:
+#       - /tmp/.X11-unix/:/tmp/.X11-unix/
+#       - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
+#       - ./HealthCheck/:/home/rover/ws_rover/HealthCheck/
+#       - ./launchFiles:/home/rover/ws_rover/volume/launchFiles
+#       - ./ws_rover:/home/rover/ws_rover
 
-  # #   # command: /bin/bash -c "sleep inf"
-  # #   # entrypoint: ["/bin/sh", "-c"]
+#   #   # command: /bin/bash -c "sleep inf"
+#   #   # entrypoint: ["/bin/sh", "-c"]
 
-  #   command: /bin/bash -c "
-  #     source /home/rover/ws_rover/install/setup.bash && \
-  #     ros2 launch nav2_bringup navigation_launch.py params_file:=/home/rover/ws_rover/volume/launchFiles/nav2_icp.yaml  "
+#     command: /bin/bash -c "
+#       source /home/rover/ws_rover/install/setup.bash && \
+#       ros2 launch nav2_bringup navigation_launch.py params_file:=/home/rover/ws_rover/volume/launchFiles/nav2_icp.yaml  "
 
   # Nav2_rviz:
   #   image: "172.0.0.200:5000/ros2_rover:v1"
