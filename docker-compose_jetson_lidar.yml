@@ -148,93 +148,93 @@ services:
       source /home/rover/ws_rover/install/setup.bash && \
       ros2 launch /home/rover/ws_rover/volume/launchFiles/rtabmap_icp_lidar.launch.py "
 
-# Nav2:
-#     image: "${registery_GPU}/ros2_rover:${ros2_rover_GPU_tag:?error}"
-#     container_name: nav2
-#     hostname: nav2
-#     tty: true
-#     privileged: true
-#     restart: unless-stopped
-#     depends_on:
-#       Lidar:
-#         condition: service_healthy
-#       StaticTransform:
-#         condition: service_started
-#       Rtabmap:
-#         condition: service_healthy
-#     runtime: nvidia
-#     deploy:
-#       resources:
-#         reservations:
-#           devices:
-#             - driver: nvidia
-#               count: 1
-#               capabilities: [gpu]
-#     # network_mode: "host"
-#     networks:
-#       rover:
-#         ipv4_address: "10.20.10.6"
+Nav2:
+    image: "${registery_GPU}/ros2_rover:${ros2_rover_GPU_tag:?error}"
+    container_name: nav2
+    hostname: nav2
+    tty: true
+    privileged: true
+    restart: unless-stopped
+    depends_on:
+      Lidar:
+        condition: service_healthy
+      StaticTransform:
+        condition: service_started
+      Rtabmap:
+        condition: service_healthy
+    runtime: nvidia
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    # network_mode: "host"
+    networks:
+      rover:
+        ipv4_address: "10.20.10.6"
 
-    # environment:
-    #   - NVIDIA_VISIBLE_DEVICES=all
-    #   - NVIDIA_DRIVER_CAPABILITIES=compute,utility
-    #   - DISPLAY=${DISPLAY}
-    #   - XAUTHORITY=${XAUTH}
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=compute,utility
+      - DISPLAY=${DISPLAY}
+      - XAUTHORITY=${XAUTH}
         
-#     volumes:
-#       - /tmp/.X11-unix/:/tmp/.X11-unix/
-#       - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
-#       - ./HealthCheck/:/home/rover/ws_rover/HealthCheck/
-#       - ./launchFiles:/home/rover/ws_rover/volume/launchFiles
-#       - ./ws_rover:/home/rover/ws_rover
+    volumes:
+      - /tmp/.X11-unix/:/tmp/.X11-unix/
+      - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
+      - ./HealthCheck/:/home/rover/ws_rover/HealthCheck/
+      - ./launchFiles:/home/rover/ws_rover/volume/launchFiles
+      - ./ws_rover:/home/rover/ws_rover
 
-#   #   # command: /bin/bash -c "sleep inf"
-#   #   # entrypoint: ["/bin/sh", "-c"]
+   # entrypoint: ["/bin/sh", "-c"]
+   # command: /bin/bash -c "sleep inf"
 
-#     command: /bin/bash -c "
-#       source /home/rover/ws_rover/install/setup.bash && \
-#       ros2 launch nav2_bringup navigation_launch.py params_file:=/home/rover/ws_rover/volume/launchFiles/nav2_icp.yaml  "
+    command: /bin/bash -c "
+      source /home/rover/ws_rover/install/setup.bash && \
+      ros2 launch nav2_bringup navigation_launch.py params_file:=/home/rover/ws_rover/volume/launchFiles/nav2_icp.yaml  "
 
-  # Nav2_rviz:
-  #   image: "${registery_GPU}/ros2_rover:${ros2_rover_GPU_tag:?error}"
-  #   container_name: nav2_rviz
-  #   hostname: nav2_rivz
-  #   tty: true
-  #   privileged: true
-  #   restart: unless-stopped
-  #   depends_on:
-  #     - Nav2
-  #   runtime: nvidia
-  #   deploy:
-  #     resources:
-  #       reservations:
-  #         devices:
-  #           - driver: nvidia
-  #             count: 1
-  #             capabilities: [gpu]
-  #   # network_mode: "host"
-  #   networks:
-  #     rover:
-  #       ipv4_address: "10.20.10.7"
+Nav2_rviz:
+    image: "${registery_GPU}/ros2_rover:${ros2_rover_GPU_tag:?error}"
+    container_name: nav2_rviz
+    hostname: nav2_rivz
+    tty: true
+    privileged: true
+    restart: unless-stopped
+    depends_on:
+      - Nav2
+    runtime: nvidia
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    # network_mode: "host"
+    networks:
+      rover:
+        ipv4_address: "10.20.10.7"
 
-  # environment:
-  #   - NVIDIA_VISIBLE_DEVICES=all
-  #   - NVIDIA_DRIVER_CAPABILITIES=compute,utility
-  #   - DISPLAY=${DISPLAY}
-  #   - XAUTHORITY=${XAUTH}
+    environment:
+    - NVIDIA_VISIBLE_DEVICES=all
+    - NVIDIA_DRIVER_CAPABILITIES=compute,utility
+    - DISPLAY=${DISPLAY}
+    - XAUTHORITY=${XAUTH}
         
-  #   volumes:
-  #     - /tmp/.X11-unix/:/tmp/.X11-unix/
-  #     - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
-  #     - ./:/home/rover/ws_rover/volume/
-  #     - ./ws_rover:/home/rover/ws_rover
+    volumes:
+      - /tmp/.X11-unix/:/tmp/.X11-unix/
+      - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
+      - ./:/home/rover/ws_rover/volume/
+      - ./ws_rover:/home/rover/ws_rover
 
-  #   # command: /bin/bash -c "sleep inf"
-  #   # entrypoint: ["/bin/sh", "-c"]
+    # command: /bin/bash -c "sleep inf"
+    # entrypoint: ["/bin/sh", "-c"]
 
-  #   command: /bin/bash -c "
-  #     source /opt/ros/humble/setup.bash && \
-  #     ros2 launch nav2_bringup rviz_launch.py "
+    command: /bin/bash -c "
+      source /opt/ros/humble/setup.bash && \
+      ros2 launch nav2_bringup rviz_launch.py "
     
   
   # Rtabmap_backend:
