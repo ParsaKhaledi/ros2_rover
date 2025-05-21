@@ -4,6 +4,14 @@ services:
     container_name: oak
     hostname: oak
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "/home/rover/ws_rover/HealthCheck/check_multi_topic_pub.bash", "3",
+             "/imu/data_raw",
+             "/oak/rgb/image_raw","/oak/stereo/image_raw" ]      
+      interval:     10s
+      timeout:      7s
+      retries:      3
+      start_period: 7s
     tty: true
     privileged: true
     runtime: nvidia
@@ -29,6 +37,7 @@ services:
       - /tmp/.X11-unix/:/tmp/.X11-unix/
       - /dev:/dev/
       - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
+      - ./HealthCheck/:/home/rover/ws_rover/HealthCheck/
       - ./launchFiles:/home/rover/ws_rover/volume/launchFiles
 
     # command: /bin/bash -c "sleep inf"
@@ -53,9 +62,9 @@ services:
     container_name: st
     hostname: st
     tty: true
-    privileged: true
     depends_on:
-      - oak
+      oak: 
+        condition: service_healthy
     restart: unless-stopped
     # network_mode: "host"
     networks:
@@ -70,6 +79,7 @@ services:
         
     volumes:
       - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
+      - ./HealthCheck/:/home/rover/ws_rover/HealthCheck/
 
     # command: /bin/bash -c "sleep inf"
     # entrypoint: ["/bin/sh", "-c"]
@@ -88,12 +98,23 @@ services:
       rover:
         ipv4_address: "10.20.10.4"
     depends_on:
-      # - roscore
-      - oak
+      oak:
+        condition: service_healthy
+      StaticTransform:
+        condition: service_started
+
+    healthcheck:
+      test: ["CMD", "/home/rover/ws_rover/HealthCheck/check_multi_topic_pub.bash", "1",
+             "/imu/data"]
+      interval:     5s
+      timeout:      3s
+      retries:      3
+      start_period: 3s
     # environment:
     #   DISPLAY=${DISPLAY}
     #   "XAUTHORITY": ${XAUTH}
     volumes:
+      - ./HealthCheck/:/home/rover/ws_rover/HealthCheck/
       - ./launchFiles:/home/rover/ws_rover/volume/launchFiles
     command: /bin/bash -c ". /home/rover/ws_rover/volume/launchFiles/start_imu_filter.bash"
 
@@ -104,8 +125,23 @@ services:
     tty: true
     privileged: true
     restart: unless-stopped
+
     depends_on:
-      - StaticTransform
+      oak:
+        condition: service_healthy
+      StaticTransform:
+        condition: service_started
+      imu_filter:
+        condition: service_healthy 
+
+    healthcheck:
+      test: ["CMD", "/home/rover/ws_rover/HealthCheck/check_multi_topic_pub.bash", "2",
+             "/rtabmap/odom", "/imu/data"]
+      interval:     5s
+      timeout:      3s
+      retries:      3
+      start_period: 7s
+
     runtime: nvidia
     deploy:
       resources:
@@ -128,6 +164,7 @@ services:
     volumes:
       - /tmp/.X11-unix/:/tmp/.X11-unix/
       - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
+      - ./HealthCheck/:/home/rover/ws_rover/HealthCheck/
       - ./launchFiles:/home/rover/ws_rover/volume/launchFiles
 
     # command: /bin/bash -c "sleep inf"
@@ -145,7 +182,14 @@ services:
     privileged: true
     restart: unless-stopped
     depends_on:
-      - Rtabmap
+      oak:
+        condition: service_healthy
+      StaticTransform:
+        condition: service_started
+      imu_filter:
+        condition: service_healthy 
+      Rtabmap: 
+        condition: service_healthy
     runtime: nvidia
     deploy:
       resources:
@@ -168,6 +212,7 @@ services:
     volumes:
       - /tmp/.X11-unix/:/tmp/.X11-unix/
       - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
+      - ./HealthCheck/:/home/rover/ws_rover/HealthCheck/
       - ./launchFiles:/home/rover/ws_rover/volume/launchFiles
 
   #   # command: /bin/bash -c "sleep inf"
@@ -209,6 +254,7 @@ services:
     volumes:
       - /tmp/.X11-unix/:/tmp/.X11-unix/
       - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
+      - ./HealthCheck/:/home/rover/ws_rover/HealthCheck/
       - ./:/home/rover/ws_rover/volume/
 
     # command: /bin/bash -c "sleep inf"
