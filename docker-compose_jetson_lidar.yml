@@ -31,6 +31,7 @@ services:
       - NVIDIA_DRIVER_CAPABILITIES=compute,utility
       - DISPLAY=${DISPLAY}
       - XAUTHORITY=${XAUTH}
+
         
     volumes:
       - /tmp/.X11-unix/:/tmp/.X11-unix/
@@ -78,8 +79,9 @@ services:
     environment:
       - NVIDIA_VISIBLE_DEVICES=all
       - NVIDIA_DRIVER_CAPABILITIES=compute,utility
-      - DISPLAY: ${DISPLAY}
-      - XAUTHORITY: ${XAUTH}
+      - DISPLAY=${DISPLAY}
+      - XAUTHORITY=${XAUTH}
+
         
     volumes:
       - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
@@ -127,7 +129,8 @@ services:
       - NVIDIA_VISIBLE_DEVICES=all
       - NVIDIA_DRIVER_CAPABILITIES=compute,utility
       - DISPLAY=${DISPLAY}
-      - XAUTHORITY=${XAUTH}}
+      - XAUTHORITY=${XAUTH}
+
         
     volumes:
       - /tmp/.X11-unix/:/tmp/.X11-unix/
@@ -172,11 +175,11 @@ services:
 #       rover:
 #         ipv4_address: "10.20.10.6"
 
-#     environment:
-#       - NVIDIA_VISIBLE_DEVICES=all
-#       - NVIDIA_DRIVER_CAPABILITIES=compute,utility
-#       - DISPLAY=${DISPLAY}
-#       - XAUTHORITY=${XAUTH}
+    # environment:
+    #   - NVIDIA_VISIBLE_DEVICES=all
+    #   - NVIDIA_DRIVER_CAPABILITIES=compute,utility
+    #   - DISPLAY=${DISPLAY}
+    #   - XAUTHORITY=${XAUTH}
         
 #     volumes:
 #       - /tmp/.X11-unix/:/tmp/.X11-unix/
@@ -214,11 +217,11 @@ services:
   #     rover:
   #       ipv4_address: "10.20.10.7"
 
-  #   environment:
-  #     - NVIDIA_VISIBLE_DEVICES=all
-  #     - NVIDIA_DRIVER_CAPABILITIES=compute,utility
-  #     - DISPLAY=${DISPLAY}
-  #     - XAUTHORITY=${XAUTH}}
+    # environment:
+    #   - NVIDIA_VISIBLE_DEVICES=all
+    #   - NVIDIA_DRIVER_CAPABILITIES=compute,utility
+    #   - DISPLAY=${DISPLAY}
+    #   - XAUTHORITY=${XAUTH}
         
   #   volumes:
   #     - /tmp/.X11-unix/:/tmp/.X11-unix/
@@ -254,9 +257,12 @@ services:
   #   #   rover:
   #   #     ipv4_address: "10.20.10.8"
 
-  #   environment:
-  #     DISPLAY: ${DISPLAY}
-  #     XAUTHORITY: ${XAUTH}
+    # environment:
+    #   - NVIDIA_VISIBLE_DEVICES=all
+    #   - NVIDIA_DRIVER_CAPABILITIES=compute,utility
+    #   - DISPLAY=${DISPLAY}
+    #   - XAUTHORITY=${XAUTH}
+
         
   #   volumes:
   #     - /tmp/.X11-unix/:/tmp/.X11-unix/
