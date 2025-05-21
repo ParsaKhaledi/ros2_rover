@@ -52,7 +52,6 @@ services:
     container_name: st
     hostname: st
     tty: true
-    privileged: true
     depends_on:
       oak: 
         condition: service_healthy
@@ -112,6 +111,7 @@ services:
     tty: true
     privileged: true
     restart: unless-stopped
+
     depends_on:
       oak:
         condition: service_healthy
@@ -208,8 +208,8 @@ services:
     volumes:
       - /tmp/.X11-unix/:/tmp/.X11-unix/
       - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
-      - ./:/home/rover/ws_rover/volume/
       - ./HealthCheck/:/home/rover/ws_rover/HealthCheck/
+      - ./:/home/rover/ws_rover/volume/
 
     # command: /bin/bash -c "sleep inf"
     # entrypoint: ["/bin/sh", "-c"]
