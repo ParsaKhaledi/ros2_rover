@@ -31,7 +31,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 	libpcl-dev  libvtk9-dev qtbase5-dev libqt5opengl5-dev \
     libsqlite3-dev libcurl4-openssl-dev\
     libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev \
-    locales software-properties-common  apt-utils cuda-toolkit-12-9
+    locales software-properties-common  apt-utils 
 
 # Set up user and permissions
 RUN groupadd ${USER_NAME} --gid ${USER_GID} && \
