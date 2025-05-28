@@ -177,7 +177,7 @@ services:
 
     command: /bin/bash -c "
       source /home/rover/ws_rover/install/setup.bash && \
-      . /home/rover/ws_rover/volume/launchFiles/start_rtabmap_rgbd.bash "
+      . /home/rover/ws_rover/volume/launchFiles/start_rtabmap_rgbd_jetson.bash "
 
   Nav2:
     image: "${registery_GPU}/ros2_rover:${ros2_rover_GPU_tag:?error}"

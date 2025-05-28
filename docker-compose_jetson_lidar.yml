@@ -146,7 +146,7 @@ services:
 
     command: /bin/bash -c "
       source /home/rover/ws_rover/install/setup.bash && \
-      ros2 launch /home/rover/ws_rover/volume/launchFiles/rtabmap_icp_lidar.launch.py "
+      ros2 launch /home/rover/ws_rover/volume/launchFiles/jetson_rtabmap_icp_lidar.launch.py "
 
   Nav2:
     image: "${registery_GPU}/ros2_rover:${ros2_rover_GPU_tag:?error}"
