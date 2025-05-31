@@ -1,5 +1,5 @@
 # Use a base image that supports CUDA on Jetson
-FROM nvidia/cuda:12.9.0-cudnn-runtime-ubuntu22.04
+FROM nvcr.io/nvidia/l4t-jetpack:r36.2.0
 ARG ROS_DISTRO=humble
 
 LABEL maintainer="Parsa Khaledi <pa.aerospace@gmail.com>"
@@ -11,7 +11,8 @@ ARG USER_UID=1000
 ARG USER_GID=1000
 ARG OPENCV_VERSION=4.11.0 # Define OpenCV version as an ARG
 
-
+ENV PATH="/usr/local/cuda/bin:${PATH}"
+ENV LD_LIBRARY_PATH="/usr/local/cuda/lib64:${LD_LIBRARY_PATH}"
 ENV DEBIAN_FRONTEND=noninteractive
 ENV QT_X11_NO_MITSHM=1
 ENV LANG=en_US.UTF-8
@@ -55,6 +56,7 @@ RUN locale &&\
     sudo apt update &&\
     sudo apt update && sudo apt upgrade -y && \
     sudo apt install -y --no-install-recommends\
+    nova-orin-init \
     ros-$ROS_DISTRO-ros-base \
     ros-$ROS_DISTRO-tf2-eigen \
     ros-$ROS_DISTRO-rclcpp \
@@ -78,6 +80,8 @@ RUN mkdir -p ${WORKDIR}/OPENCV && cd ${WORKDIR}/OPENCV && \
         -D CMAKE_INSTALL_PREFIX=/usr/local \
         -D WITH_CUDA=ON      \
         -D WITH_CUDNN=ON     \
+        -D WITH_CUBLAS=ON    \
+        -D OPENCV_DNN_CUDA=ON \
         -D CUDA_ARCH_BIN=8.7 \
         -D CUDA_ARCH_PTX=""  \
         -D OPENCV_GENERATE_PKGCONFIG=ON \
