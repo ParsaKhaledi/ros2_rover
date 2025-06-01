@@ -56,7 +56,6 @@ RUN locale &&\
     sudo apt update &&\
     sudo apt update && sudo apt upgrade -y && \
     sudo apt install -y --no-install-recommends\
-    nova-orin-init \
     ros-$ROS_DISTRO-ros-base \
     ros-$ROS_DISTRO-tf2-eigen \
     ros-$ROS_DISTRO-rclcpp \
