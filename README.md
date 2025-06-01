@@ -19,7 +19,7 @@ Health Checks are added to make user able to monitor fuctionality of each contai
 
 
 
-## Use Sepratly 
+## Use Separately 
 
 ### [sllidar_ros2](https://github.com/Slamtec/sllidar_ros2)
 Driver to use ROS2 for [SLAMTEC](https://www.slamtec.com/en) LIDAR. all instructions needed are writen in the very link. It's worth to mention that you need to publish tf yourself. It can be used in slams like gmapping, slam_toolbox and Cartographer.
