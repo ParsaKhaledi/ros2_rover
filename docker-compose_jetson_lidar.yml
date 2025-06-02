@@ -235,6 +235,37 @@ services:
     command: /bin/bash -c "
       source /home/rover/ws_rover/install/setup.bash && \
       ros2 launch nav2_bringup rviz_launch.py "
+
+  ArduinoCMD:
+    image: "${registery_GPU}/ros2_rover:${ros2_rover_GPU_tag:?error}"
+    container_name: aduinocmd
+    hostname: aduinocmd
+    tty: true
+    privileged: true
+    restart: unless-stopped
+    depends_on:
+      Nav2:
+        condition: service_started
+    # network_mode: "host"
+    networks:
+      rover:
+        ipv4_address: "10.20.10.8"
+
+    environment:
+      DISPLAY: ${DISPLAY}
+      XAUTHORITY: ${XAUTH}
+        
+    volumes:
+      - /tmp/.X11-unix/:/tmp/.X11-unix/
+      - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
+      - ./HealthCheck/:/home/rover/ws_rover/HealthCheck/
+      - ./launchFiles:/home/rover/ws_rover/volume/launchFile
+
+    # command: /bin/bash -c "sleep inf"
+    # entrypoint: ["/bin/sh", "-c"]
+
+    command: /bin/bash -c "
+      python3  /home/rover/ws_rover/volume/launchFile/arduino-cmd-vel.py" 
     
   
   # Rtabmap_backend:
