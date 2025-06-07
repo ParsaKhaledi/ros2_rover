@@ -76,27 +76,28 @@ RUN mkdir -p ${WORKDIR}/OPENCV && cd ${WORKDIR}/OPENCV && \
     cd opencv-${OPENCV_VERSION} && \
     mkdir release && cd release && \
     cmake -D CMAKE_BUILD_TYPE=Release \
-        -D CMAKE_INSTALL_PREFIX=/usr/local \
-        -D WITH_CUDA=ON      \
-        -D WITH_CUDNN=ON     \
-        -D WITH_CUBLAS=ON    \
-        -D OPENCV_DNN_CUDA=ON \
-        -D CUDA_ARCH_BIN=8.7 \
-        -D CUDA_ARCH_PTX=""  \
-        -D OPENCV_GENERATE_PKGCONFIG=ON \
-        -D WITH_GSTREAMER=ON \
-        -D WITH_LIBV4L=ON    \
-        -D ENABLE_FAST_MATH=1 \
-        -D CUDA_FAST_MATH=1  \
-        -D WITH_CUBLAS=ON    \
-        -D OPENCV_EXTRA_MODULES_PATH=../../opencv_contrib-${OPENCV_VERSION}/modules\
-        -D BUILD_EXAMPLES=OFF \
-        -D BUILD_opencv_python3=ON \
-        -D BUILD_opencv_python2=OFF \
-        -D PYTHON_EXECUTABLE=/usr/bin/python3 \
-        -D BUILD_TESTS=OFF \
-        -D BUILD_PERF_TESTS=OFF \
-        -D CMAKE_INSTALL_PREFIX=/usr/local .. && \
+          -D CMAKE_INSTALL_PREFIX=/usr/local \
+          -D WITH_CUDA=ON      \
+          -D WITH_CUDNN=ON     \
+          -D WITH_CUBLAS=ON    \
+          -D OPENCV_DNN_CUDA=ON \
+          -D CUDA_ARCH_BIN=8.7 \
+          -D CUDA_ARCH_PTX=""  \
+          -D OPENCV_GENERATE_PKGCONFIG=ON \
+          -D WITH_GSTREAMER=ON \
+          -D WITH_LIBV4L=ON    \
+          -D ENABLE_FAST_MATH=1 \
+          -D CUDA_FAST_MATH=1  \
+          -D WITH_CUBLAS=ON    \
+          -D OPENCV_EXTRA_MODULES_PATH=../../opencv_contrib-${OPENCV_VERSION}/modules\
+          -D BUILD_EXAMPLES=OFF \
+          -D BUILD_opencv_python3=ON \
+          -D BUILD_opencv_python2=OFF \
+          -D PYTHON_EXECUTABLE=/usr/bin/python3 \
+          -D BUILD_TESTS=OFF \
+          -D BUILD_opencv_cudafeatures2d=ON\
+          -D BUILD_PERF_TESTS=OFF \
+          -D CMAKE_INSTALL_PREFIX=/usr/local .. && \
     make -j5 && \
     sudo make install && \
     echo 'export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH' >> ~/.bashrc && \
