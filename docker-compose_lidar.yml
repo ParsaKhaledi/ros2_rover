@@ -233,6 +233,7 @@ services:
     volumes:
       - /tmp/.X11-unix/:/tmp/.X11-unix/
       - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
+      - /dev/:/dev/
       - ./HealthCheck/:/home/rover/ws_rover/HealthCheck/
       - ./launchFiles:/home/rover/ws_rover/volume/launchFile
 
