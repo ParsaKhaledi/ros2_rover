@@ -6,10 +6,10 @@ Two Dockerfile provided, for using with or without GPU. Built docker images can 
 ### Launch files
 All required launchfiles and configs are placed in launchfile folder.
 ### Compose files
-This compose files are ment to launch whole project with various configurations. 
+This compose files are ment to launch whole project with various configurations. The ones with jetson in their names are going to use jetson orin nx GPU in their contianers (-D CUDA_ARCH_BIN=8.7 in building opencv cmake command which is for orin nx).
 ```
 # To start
-xhost +local:
+xhost +local:docker
 docker compose -f <file name> up -d 
 # To stop
 docker compose -f <file name> down
