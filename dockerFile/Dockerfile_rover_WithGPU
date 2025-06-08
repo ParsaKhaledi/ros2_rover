@@ -104,7 +104,7 @@ RUN mkdir -p ${WORKDIR}/OPENCV && cd ${WORKDIR}/OPENCV && \
     echo 'export PYTHONPATH=/usr/local/lib/python3.10/site-packages/:$PYTHONPATH' >> ~/.bashrc && \
     source ~/.bashrc && \
     sudo ldconfig && \
-    cd ${WORKDIR}/ && rm -rf OPENCV # Clean up
+    cd ${WORKDIR}/ && sudo rm -rf OPENCV # Clean up
 
 # Create source directory and clone the sllidar_ros2 and rtabmap_ros repository
 RUN mkdir -p ${WORKDIR}/src && \
