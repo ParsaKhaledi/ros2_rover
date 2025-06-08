@@ -3,7 +3,7 @@
 source /opt/ros/$ROS_DISTRO/setup.bash
 ### For RGBD cameras
 ros2 launch rtabmap_launch rtabmap.launch.py   \
-     args:='-d  --Optimizer/GravitySigma 0.1 --Vis/FeatureType 6 --Kp/DetectorStrategy 6 --Grid/MapFrameProjection true     \
+     args:='-d  --Optimizer/GravitySigma 0.1 --Vis/FeatureType 1 --Kp/DetectorStrategy 1 --Grid/MapFrameProjection true     \
      --NormalsSegmentation false --Grid/MaxGroundHeight 0.5  --Grid/MaxObstacleHeight 2.2 --RGBD/StartAtOrigin true          \
      --Grid/RayTracing true --Grid/3D true  --Grid/FlatObstacleDetected true --Grid/MaxGroundHeight 0.0                      \
      --Kp/NNStrategy 4 --SURF/GpuVersion true --SURF/GpuKeypointsRatio 0.01 --SIFT/Gpu true --ORB/Gpu true
