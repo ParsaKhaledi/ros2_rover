@@ -95,7 +95,8 @@ RUN mkdir -p ${WORKDIR}/OPENCV && cd ${WORKDIR}/OPENCV && \
           -D BUILD_opencv_python2=OFF \
           -D PYTHON_EXECUTABLE=/usr/bin/python3 \
           -D BUILD_TESTS=OFF \
-          -D BUILD_opencv_cudafeatures2d=ON\
+          -D BUILD_opencv_cudafeatures2d=ON \
+          -D WITH_CUDASIFT=ON \ 
           -D BUILD_PERF_TESTS=OFF \
           -D CMAKE_INSTALL_PREFIX=/usr/local .. && \
     make -j5 && \
