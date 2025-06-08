@@ -348,7 +348,7 @@ networks:
       config:
         - subnet: "10.20.10.0/24"
 
-
+# Docker Local Registry commands to commiunicate 
 # curl -I -X GET http://172.0.0.200:5000/v2/nvidia/l4t-jetpack/manifests/r36.4.0
 # curl -X DELETE http://172.0.0.200:5000/v2/nvidia/l4t-jetpack/manifests/sha256:34ccf0f3b63c6da9eee45f2e79de9bf7fdf3beda9abfd72bbf285ae9d40bb673
 # curl -X GET http://172.0.0.200:5000/v2/nvidia/l4t-jetpack/tags/list
