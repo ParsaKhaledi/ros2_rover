@@ -32,7 +32,8 @@ RUN apt update	1>/dev/null && apt upgrade -y 1>/dev/nul && \
 	ros-$ROS_DISTRO-depthai-ros \
 	ros-$ROS_DISTRO-imu-filter-madgwick \
 	ros-$ROS_DISTRO-navigation2 ros-$ROS_DISTRO-nav2-bringup \
-	ros-$ROS_DISTRO-rtabmap-ros 1>/dev/nul
+	ros-$ROS_DISTRO-rtabmap-ros 1>/dev/nul &&\
+ pip3 install pyserial
 
 ### Set User	
 RUN groupadd ${USER_NAME} --gid ${USER_GID} && \
