@@ -114,7 +114,7 @@ RUN mkdir -p ${WORKDIR}/src && \
 	source /opt/ros/$ROS_DISTRO/setup.bash && \
     git clone https://github.com/Slamtec/sllidar_ros2.git 				&& \
     git clone https://github.com/introlab/rtabmap.git  					&& \
-    git clone --branch ros2 https://github.com/introlab/rtabmap_ros.git && \
+    git clone --branch humble-devel https://github.com/introlab/rtabmap_ros.git && \
 	cd .. && sudo rosdep init && rosdep update && \
     rosdep install --from-paths src --ignore-src -r -y && \
     source /opt/ros/$ROS_DISTRO/setup.bash && export MAKEFLAGS="-j4" &&\
