@@ -27,7 +27,7 @@ WORKDIR ${WORKDIR}
 RUN apt-get update && apt-get install -y --no-install-recommends \
     vim udev git sudo unzip curl cmake wget tmux apt-utils \
     xauth xorg openbox gfortran\
-    python3 python3-pip python3-argcomplete \
+    python3 python3-pip python3-argcomplete python3-serial \
     libjpeg-dev libpng-dev libtiff-dev libv4l-dev libgtk-3-dev libatlas-base-dev \
 	libpcl-dev  libvtk9-dev qtbase5-dev libqt5opengl5-dev \
     libsqlite3-dev libcurl4-openssl-dev\

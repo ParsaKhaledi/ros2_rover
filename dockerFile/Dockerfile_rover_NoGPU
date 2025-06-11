@@ -1,4 +1,4 @@
-ARG ROS_DISTRO=humble
+ARG ROS_DISTRO=jazzy
 FROM ros:${ROS_DISTRO}-ros-base
 
 LABEL maintainer="Parsa Khaledi <pa.aerospace@gmail.com>"
@@ -14,7 +14,7 @@ ENV QT_X11_NO_MITSHM=1
 ENV LANG=en_US.UTF-8
 ENV ROS2_INSTALL_PATH=/opt/ros/$ROS_DISTRO
 ENV WORKDIR=/home/${USER_NAME}/ws_rover
-ENV ROS_DISTRO=humble
+ENV ROS_DISTRO=jazzy
 WORKDIR ${WORKDIR}
 
 ### Install essentials, Nav2 and rtabmap 
@@ -22,7 +22,7 @@ RUN apt update	1>/dev/null && apt upgrade -y 1>/dev/nul && \
 	apt install -y --no-install-recommends \
 	vim udev git sudo unzip curl cmake wget tmux apt-utils\
 	ros-dev-tools \
-	xauth xorg openbox python3-argcomplete python3 python3-pip \
+	xauth xorg openbox python3-argcomplete python3 python3-pip python3-serial \
 	ros-$ROS_DISTRO-rclcpp \
 	ros-$ROS_DISTRO-rmw-cyclonedds-cpp \
 	ros-$ROS_DISTRO-rviz2* \

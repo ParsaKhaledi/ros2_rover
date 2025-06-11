@@ -67,7 +67,7 @@ jobs:
           push: true
           tags: ${{ env.Registery }}/${{ env.ImageName }}:${{ env.ImageTag }}
           labels: ${{ steps.meta.outputs.labels }}
-          platforms: linux/amd64 # ,linux/arm64
+          platforms: linux/amd64,linux/arm64
           file: ./dockerFile/Dockerfile_rover_NoGPU
           build-args: |
             BUILD_DATE=${DATE_RFC3339}
