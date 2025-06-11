@@ -5,7 +5,7 @@ LABEL maintainer="Parsa Khaledi <pa.aerospace@gmail.com>"
 
 SHELL ["/bin/bash", "-c"]
 
-ARG USER_NAME=roverq
+ARG USER_NAME=rover
 ARG USER_UID=1001
 ARG USER_GID=1001
 
