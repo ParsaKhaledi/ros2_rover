@@ -238,8 +238,8 @@ services:
 
   ArduinoCMD:
     image: "${registery_GPU}/ros2_rover:${ros2_rover_GPU_tag:?error}"
-    container_name: aduinocmd
-    hostname: aduinocmd
+    container_name: arduinocmd
+    hostname: arduinocmd
     tty: true
     privileged: true
     restart: unless-stopped
